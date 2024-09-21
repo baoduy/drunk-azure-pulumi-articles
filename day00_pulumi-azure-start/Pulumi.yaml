@@ -1,0 +1,10 @@
+name: day00_pulumi-azure-start
+runtime:
+  name: nodejs
+  options:
+    packagemanager: pnpm
+description: A minimal Azure Native TypeScript Pulumi program
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: azure-typescript

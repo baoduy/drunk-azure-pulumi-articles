@@ -1,0 +1,16 @@
+{
+    "name": "day00_pulumi-azure-start",
+    "main": "index.ts",
+    "scripts": {
+        "up": "pulumi up -y",
+        "destroy": "pulumi destroy -y"
+    },
+    "devDependencies": {
+        "@types/node": "^18",
+        "typescript": "^5.0.0"
+    },
+    "dependencies": {
+        "@pulumi/azure-native": "^2.0.0",
+        "@pulumi/pulumi": "^3.113.0"
+    }
+}
