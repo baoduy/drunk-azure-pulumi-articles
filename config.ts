@@ -1,9 +1,13 @@
 export const azGroups = {
+  //The name of Hub VNet resource group
   hub: "01-hub",
+  //The name of AKS VNet resource group
   ask: "02-ask",
+  //The name of CloudPC VNet resource group
   cloudPC: "03-cloudPC",
 };
 
+//The subnet IP address spaces
 export const subnetSpaces = {
   firewall: "192.168.30.0/26",
   firewallManage: "192.168.30.64/26",

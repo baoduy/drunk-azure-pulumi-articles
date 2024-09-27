@@ -12,8 +12,6 @@ To install the dependencies, run:
 pnpm install
 ```
 
-````
-
 ## Building the Project
 
 To build the project, run:
