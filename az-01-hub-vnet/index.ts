@@ -11,7 +11,15 @@ const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.hub));
 const vnet = new network.VirtualNetwork(
   getName(config.azGroups.hub, "vnet"),
   {
-    resourceGroupName: rsGroup.name, // Resource group name
+    // Resource group name
+    resourceGroupName: rsGroup.name,
+    //Enable VN protection
+    enableVmProtection: true,
+    //Enable Vnet encryption
+    encryption: {
+      enabled: true,
+      enforcement: network.VirtualNetworkEncryptionEnforcement.AllowUnencrypted,
+    },
     addressSpace: {
       addressPrefixes: [
         config.subnetSpaces.firewall, // Address space for firewall subnet
