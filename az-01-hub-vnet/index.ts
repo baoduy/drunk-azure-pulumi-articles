@@ -70,15 +70,20 @@ const managePublicIP = new network.PublicIPAddress(
   { dependsOn: rsGroup }, // Ensure the management public IP depends on the resource group
 );
 
+//Firewall Policy
+const rules = FirewallPolicy(getName(config.azGroups.hub, "fw-policy"), {
+  rsGroup,
+  //The Policy tier and Firewall tier must be the same
+  tier: network.FirewallPolicySkuTier.Basic,
+});
+
 // Create Azure Firewall
 const firewall = new network.AzureFirewall(
   getName(config.azGroups.hub, "firewall"),
   {
     resourceGroupName: rsGroup.name, // Resource group name
     firewallPolicy: {
-      id: FirewallPolicy(getName(config.azGroups.hub, "fw-policy"), {
-        rsGroup,
-      }).id, // Firewall policy ID
+      id: rules.policy.id, // Firewall policy ID
     },
     ipConfigurations: [
       {
@@ -102,11 +107,21 @@ const firewall = new network.AzureFirewall(
       },
     },
     sku: {
-      name: network.AzureFirewallSkuName.AZFW_VNet, // Firewall SKU name
-      tier: network.AzureFirewallSkuTier.Basic, // Firewall SKU tier
+      name: network.AzureFirewallSkuName.AZFW_VNet,
+      //The Policy tier and Firewall tier must be the same
+      tier: network.AzureFirewallSkuTier.Basic,
     },
   },
-  { dependsOn: [publicIP, vnet, managePublicIP] }, // Ensure the firewall depends on the public IPs and virtual network
+  {
+    // Ensure the firewall dependents
+    dependsOn: [
+      publicIP,
+      vnet,
+      managePublicIP,
+      rules.policy,
+      rules.policyGroup,
+    ],
+  },
 );
 
 // Export the information that will be used in the other projects

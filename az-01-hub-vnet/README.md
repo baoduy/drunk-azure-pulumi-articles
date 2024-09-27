@@ -1,10 +1,15 @@
-Sure! Below is a detailed technical documentation for the provided `index.ts` file.
+# az-01-hub-vnet
 
-# Technical Documentation
+This project is a Pulumi script written in TypeScript that provisions Azure resources. It sets up a resource group, a virtual network with subnets, public IP addresses, and an Azure Firewall with specific configurations.
 
 ## Overview
 
-This file is a Pulumi script written in TypeScript that provisions Azure resources. It sets up a resource group, a virtual network with subnets, public IP addresses, and an Azure Firewall with specific configurations.
+The script automates the creation of the following Azure resources:
+
+- Resource Group
+- Virtual Network with Subnets
+- Public IP Addresses
+- Azure Firewall with specific configurations
 
 ## Dependencies
 
@@ -20,147 +25,174 @@ The script imports several modules and functions:
 
 ### Resource Group
 
+Creates a resource group using a name derived from the configuration.
+
 ```typescript
+import * as resources from '@pulumi/azure-native/resources';
+import { getGroupName } from '@az-commons';
+import { config } from '../config';
+
 const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.hub));
 ```
 
-- **Description**: Creates a resource group using a name derived from the configuration.
-
 ### Virtual Network
 
-```typescript
-const vnet = new network.VirtualNetwork(
-  getName(config.azGroups.hub, 'vnet'),
-  {
-    resourceGroupName: rsGroup.name,
-    addressSpace: {
-      addressPrefixes: [
-        config.subnetSpaces.firewall,
-        config.subnetSpaces.general,
-        config.subnetSpaces.firewallManage,
-      ],
-    },
-    subnets: [
-      {
-        name: 'AzureFirewallSubnet',
-        addressPrefix: config.subnetSpaces.firewall,
-      },
-      {
-        name: 'AzureFirewallManagementSubnet',
-        addressPrefix: config.subnetSpaces.firewallManage,
-      },
-      {
-        name: 'general',
-        addressPrefix: config.subnetSpaces.general,
-        privateEndpointNetworkPolicies:
-          network.VirtualNetworkPrivateEndpointNetworkPolicies.Enabled,
-      },
-    ],
-  },
-  { dependsOn: rsGroup }
-);
-```
+Creates a virtual network with three subnets:
 
-- **Description**: Creates a virtual network with three subnets:
-  - `AzureFirewallSubnet`: For the Azure Firewall.
-  - `AzureFirewallManagementSubnet`: For managing the Azure Firewall.
-  - `general`: For general use, with private endpoint network policies enabled.
+- `AzureFirewallSubnet`: For the Azure Firewall.
+- `AzureFirewallManagementSubnet`: For managing the Azure Firewall.
+- `general`: For general use, with private endpoint network policies enabled.
+
+```typescript
+import * as network from '@pulumi/azure-native/network';
+
+const vnet = new network.VirtualNetwork('vnet', {
+  resourceGroupName: rsGroup.name,
+  addressSpace: { addressPrefixes: ['10.0.0.0/16'] },
+  subnets: [
+    {
+      name: 'AzureFirewallSubnet',
+      addressPrefix: '10.0.1.0/24',
+    },
+    {
+      name: 'AzureFirewallManagementSubnet',
+      addressPrefix: '10.0.2.0/24',
+    },
+    {
+      name: 'general',
+      addressPrefix: '10.0.3.0/24',
+      privateEndpointNetworkPolicies: 'Enabled',
+    },
+  ],
+});
+```
 
 ### Public IP Addresses
 
+Creates two static public IP addresses:
+
+- `publicIP`: For outbound traffic.
+- `managePublicIP`: For managing the Azure Firewall.
+
 ```typescript
-const publicIP = new network.PublicIPAddress(
-  getName('outbound', 'ip'),
-  {
-    resourceGroupName: rsGroup.name,
-    publicIPAllocationMethod: network.IPAllocationMethod.Static,
-    sku: {
-      name: network.PublicIPAddressSkuName.Standard,
-      tier: network.PublicIPAddressSkuTier.Regional,
-    },
-  },
-  { dependsOn: rsGroup }
-);
+const publicIP = new network.PublicIPAddress('publicIP', {
+  resourceGroupName: rsGroup.name,
+  publicIPAllocationMethod: 'Static',
+  sku: { name: 'Standard' },
+});
 
-const managePublicIP = new network.PublicIPAddress(
-  getName('manage', 'ip'),
-  {
-    resourceGroupName: rsGroup.name,
-    publicIPAllocationMethod: network.IPAllocationMethod.Static,
-    sku: {
-      name: network.PublicIPAddressSkuName.Standard,
-      tier: network.PublicIPAddressSkuTier.Regional,
-    },
-  },
-  { dependsOn: rsGroup }
-);
+const managePublicIP = new network.PublicIPAddress('managePublicIP', {
+  resourceGroupName: rsGroup.name,
+  publicIPAllocationMethod: 'Static',
+  sku: { name: 'Standard' },
+});
 ```
-
-- **Description**: Creates two static public IP addresses:
-  - `publicIP`: For outbound traffic.
-  - `managePublicIP`: For managing the Azure Firewall.
 
 ### Azure Firewall
 
-```typescript
-const firewall = new network.AzureFirewall(
-  getName(config.azGroups.hub, 'firewall'),
-  {
-    resourceGroupName: rsGroup.name,
-    firewallPolicy: {
-      id: FirewallPolicy(getName(config.azGroups.hub, 'fw-policy'), {
-        rsGroup,
-      }).id,
-    },
-    ipConfigurations: [
-      {
-        name: publicIP.name,
-        publicIPAddress: { id: publicIP.id },
-        subnet: {
-          id: vnet.subnets.apply(
-            (s) => s!.find((s) => s!.name === 'AzureFirewallSubnet')!.id!
-          ),
-        },
-      },
-    ],
-    managementIpConfiguration: {
-      name: managePublicIP.name,
-      publicIPAddress: { id: managePublicIP.id },
-      subnet: {
-        id: vnet.subnets.apply(
-          (s) =>
-            s!.find((s) => s!.name === 'AzureFirewallManagementSubnet')!.id!
-        ),
-      },
-    },
-    sku: {
-      name: network.AzureFirewallSkuName.AZFW_VNet,
-      tier: network.AzureFirewallSkuTier.Basic,
-    },
-  },
-  { dependsOn: [publicIP, vnet, managePublicIP] }
-);
-```
+Creates an Azure Firewall with:
 
-- **Description**: Creates an Azure Firewall with:
-  - A firewall policy.
-  - IP configurations for the firewall and management.
-  - A basic SKU tier.
+- A firewall policy.
+- IP configurations for the firewall and management.
+- A basic SKU tier.
+
+```typescript
+import * as firewall from '@pulumi/azure-native/network';
+
+const firewallPolicy = new firewall.FirewallPolicy('firewallPolicy', {
+  resourceGroupName: rsGroup.name,
+  sku: { tier: 'Basic' },
+});
+
+const firewallInstance = new firewall.AzureFirewall('firewall', {
+  resourceGroupName: rsGroup.name,
+  sku: { name: 'AZFW_VNet', tier: 'Basic' },
+  firewallPolicy: { id: firewallPolicy.id },
+  ipConfigurations: [
+    {
+      name: 'firewallConfig',
+      subnet: { id: vnet.subnets[0].id },
+      publicIPAddress: { id: publicIP.id },
+    },
+    {
+      name: 'firewallManageConfig',
+      subnet: { id: vnet.subnets[1].id },
+      publicIPAddress: { id: managePublicIP.id },
+    },
+  ],
+});
+```
 
 ## Exports
 
+Exports the IDs and addresses of the created resources for use in other projects.
+
 ```typescript
-export const rsGroupId = rsGroup.id;
-export const vnetId = vnet.id;
-export const IPAddress = { address: publicIP.ipAddress, id: publicIP.id };
+export const rsGroupId = rsGroup.id; // Resource group ID
+export const vnetId = vnet.id; // Virtual network ID
+export const IPAddress = { address: publicIP.ipAddress, id: publicIP.id }; // Public IP address and ID
 export const firewallId = {
-  address: firewall.ipConfigurations.apply((c) => c![0]!.privateIPAddress!),
-  id: firewall.id,
+  address: firewallInstance.ipConfigurations.apply(
+    (c) => c![0]!.privateIPAddress!
+  ), // Firewall private IP address
+  id: firewallInstance.id, // Firewall ID
 };
 ```
 
-- **Description**: Exports the IDs and addresses of the created resources for use in other projects.
+## Configuration
 
-## Summary
+The configuration settings for the project are defined in the `config.ts` file.
 
-This script automates the creation of a resource group, virtual network, subnets, public IP addresses, and an Azure Firewall with specific configurations. The resources are interdependent, ensuring proper provisioning order.
+```typescript
+export const azGroups = {
+  //The name of Hub VNet resource group
+  hub: '01-hub',
+  //The name of AKS VNet resource group
+  ask: '02-ask',
+  //The name of CloudPC VNet resource group
+  cloudPC: '03-cloudPC',
+};
+
+//The subnet IP address spaces
+export const subnetSpaces = {
+  firewall: '192.168.30.0/26',
+  firewallManage: '192.168.30.64/26',
+  general: '192.168.30.128/27',
+  aks: '192.168.31.0/24',
+  cloudPC: '192.168.32.0/25',
+  devOps: '192.168.32.128/27',
+};
+```
+
+## Usage
+
+### Installation
+
+To install the dependencies, run:
+
+```bash
+pnpm install
+```
+
+### Building the Project
+
+To build the project, run:
+
+```bash
+pnpm run build
+```
+
+### Pulumi Commands
+
+- **Initialize a new stack**: `pnpm run new-stack`
+- **Deploy the stack**: `pnpm run up`
+- **Refresh and deploy the stack**: `pnpm run reup`
+- **Destroy the stack**: `pnpm run destroy`
+- **Update dependencies**: `pnpm run update`
+- **Check dependencies**: `pnpm run check`
+- **Export stack state**: `pnpm run export`
+- **Import stack state**: `pnpm run import`
+
+## License
+
+This project is licensed under the MIT License.
