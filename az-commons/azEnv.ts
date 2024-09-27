@@ -7,5 +7,5 @@ export const subscriptionId = config.apply((c) => c.subscriptionId);
 export const currentPrincipal = config.apply((c) => c.objectId);
 
 const env = JSON.parse(process.env.PULUMI_CONFIG ?? "{}");
-export const currentRegionName = (env["azure-native:config:location"] ??
+export const currentRegionCode = (env["azure-native:config:location"] ??
   "SoutheastAsia") as string;

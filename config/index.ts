@@ -6,7 +6,8 @@ export const azGroups = {
 
 export const subnetSpaces = {
   firewall: "192.168.30.0/26",
-  general: "192.168.30.64/27",
+  firewallManage: "192.168.30.64/26",
+  general: "192.168.30.128/27",
   aks: "192.168.31.0/24",
   cloudPC: "192.168.32.0/25",
   devOps: "192.168.32.128/27",
