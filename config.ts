@@ -1,10 +1,12 @@
 export const azGroups = {
+  //The name of Shared resource group
+  shared: "01-shared",
   //The name of Hub VNet resource group
-  hub: "01-hub",
+  hub: "02-hub",
   //The name of AKS VNet resource group
-  ask: "02-ask",
+  ask: "03-ask",
   //The name of CloudPC VNet resource group
-  cloudPC: "03-cloudPC",
+  cloudPC: "04-cloudPC",
 };
 
 //The subnet IP address spaces
