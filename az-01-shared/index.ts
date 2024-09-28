@@ -22,8 +22,14 @@ const logInfo = Log(config.azGroups.shared, {
 
 // Export the information that will be used in the other projects
 export const rsGroupId = rsGroup.id;
-export const logWorkspaceId = logInfo.workspace.id;
-export const appInsightId = logInfo.appInsight.id;
+export const logWorkspace = {
+  id: logInfo.workspace.id,
+  customerId: logInfo.workspace.customerId,
+};
+export const appInsight = {
+  id: logInfo.appInsight.id,
+  key: logInfo.appInsight.instrumentationKey,
+};
 export const vault = {
   id: vaultInfo.vault.id,
   readOnlyGroupId: vaultInfo.vaultReadOnlyGroup.id,

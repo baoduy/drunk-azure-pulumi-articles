@@ -7,19 +7,20 @@ import * as pulumi from "@pulumi/pulumi";
 import * as inputs from "@pulumi/azure-native/types/input";
 
 //Create Firewall Policy Group for appRules and netRules
-const createPolicyGroup = ({
-  name,
-  appRules,
-  netRules,
-  rsGroup,
-  policy,
-}: {
-  name: string;
-  policy: network.FirewallPolicy;
-  rsGroup: resources.ResourceGroup;
-  netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[];
-  appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[];
-}) => {
+const createPolicyGroup = (
+  name: string,
+  {
+    appRules,
+    netRules,
+    rsGroup,
+    policy,
+  }: {
+    policy: network.FirewallPolicy;
+    rsGroup: resources.ResourceGroup;
+    netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[];
+    appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[];
+  },
+) => {
   const ruleCollections: pulumi.Input<inputs.network.FirewallPolicyFilterRuleCollectionArgs>[] =
     [];
   if (netRules.length > 0) {
@@ -46,7 +47,7 @@ const createPolicyGroup = ({
   }
 
   return new network.FirewallPolicyRuleCollectionGroup(
-    `${name}-group`,
+    `${name}-fw-group`,
     {
       resourceGroupName: rsGroup.name, // Resource group name
       firewallPolicyName: policy.name, // Name of the firewall policy
@@ -64,15 +65,15 @@ export default (
   {
     rsGroup,
     //This tier should be similar to Firewall tier
-    tier,
+    tier = network.FirewallPolicySkuTier.Basic,
   }: {
     rsGroup: resources.ResourceGroup;
-    tier: network.FirewallPolicySkuTier;
+    tier?: network.FirewallPolicySkuTier;
   },
 ) => {
   // Create a Firewall Policy
   const policy = new network.FirewallPolicy(
-    name,
+    `${name}-fw-policy`,
     {
       resourceGroupName: rsGroup.name,
       sku: { tier },
@@ -93,8 +94,7 @@ export default (
   appRules.push(...cloudpcPolicyGroup.appRules);
 
   //Create Policy Group for the rules above
-  const policyGroup = createPolicyGroup({
-    name,
+  const policyGroup = createPolicyGroup(name, {
     appRules,
     netRules,
     rsGroup,

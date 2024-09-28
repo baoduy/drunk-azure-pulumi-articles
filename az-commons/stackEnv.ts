@@ -7,6 +7,15 @@ export const projectName =
 export const stack =
   process.env.PULUMI_NODEJS_STACK ?? pulumi.getStack().toLowerCase();
 
+export const StackReference = <TOutput = {}>(
+  projectName: string,
+): pulumi.Output<TOutput> => {
+  const stackRef = new pulumi.StackReference(
+    `${organization}/${projectName}/${stack}`,
+  );
+  return stackRef.outputs as pulumi.Output<TOutput>;
+};
+
 console.log("Pulumi Environments:", {
   organization,
   projectName,
