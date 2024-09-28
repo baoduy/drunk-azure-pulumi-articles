@@ -49,11 +49,16 @@ export default (
     securityEnabled: true,
   });
 
-  /** This is the roles allows to read the secrets on key vault include (key, certificate and secrets)
-   * I put the name and ID here for reference purposes however, only id i used.
-   * In here I combined all the roles into 1 Entra group however, if wishes you can split it into different group depend on your env needs.
-   * To get all available roles on Azure you can using this Rest API: https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-list-rest
+  /**
+   * These roles allow read access to the secrets in the Key Vault, including keys, certificates, and secrets.
+   * The role names and IDs are provided here for reference, but only the ID is used in the code.
+   * All roles are combined into a single Entra ID group in this implementation. However, you can split them
+   * into separate groups depending on your environment's requirements.
+   *
+   * To retrieve all available roles in Azure, you can use the following REST API:
+   * https://learn.microsoft.com/en-us/azure/role-based-access-control/role-assignments-list-rest
    */
+
   //ReadOnly Roles
   [
     {
