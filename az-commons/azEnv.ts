@@ -17,4 +17,26 @@ export const currentPrincipal = config.apply((c) => c.objectId);
 const env = JSON.parse(process.env.PULUMI_CONFIG ?? "{}");
 
 // Export the current Azure region code, defaulting to "SoutheastAsia" if not set
-export const currentRegionCode = env["azure-native:config:location"]!
+export const currentRegionCode = env["azure-native:config:location"]!;
+
+//Parse resource info from ID
+export const getResourceInfoFromId = (id: string) => {
+  const details = id.trim().split("/");
+  let name = "";
+  let groupName = "";
+  let subId = "";
+
+  details.forEach((d, index) => {
+    if (d === "subscriptions") subId = details[index + 1];
+    if (d === "resourceGroups" || d === "resourcegroups")
+      groupName = details[index + 1];
+    if (index === details.length - 1) name = d;
+  });
+
+  return {
+    name,
+    id,
+    resourceGroupName: groupName,
+    subscriptionId: subId ?? subscriptionId,
+  };
+};

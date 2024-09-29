@@ -8,9 +8,9 @@ import Firewall from "./Firewall";
 import FirewallPolicy from "./FirewallPolicy";
 
 //Reference to the output of `az-01-shared` and link workspace to firewall for log monitoring.
-const sharedStack = StackReference("az-01-shared") as pulumi.Output<{
-  logWorkspace: { id: string };
-}>;
+const sharedStack = StackReference(
+  "az-01-shared",
+) as pulumi.Output<config.SharedStackOutput>;
 
 // Create Hub Resource Group
 const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.hub));
@@ -46,7 +46,7 @@ const rules = FirewallPolicy(config.azGroups.hub, {
   tier: network.FirewallPolicySkuTier.Basic,
 });
 
-const { publicIP, firewall } = Firewall(config.azGroups.hub, {
+const firewallInfo = Firewall(config.azGroups.hub, {
   ...rules,
   rsGroup,
   vnet,
@@ -58,8 +58,13 @@ const { publicIP, firewall } = Firewall(config.azGroups.hub, {
 // Export the information that will be used in the other projects
 export const rsGroupId = rsGroup.id;
 export const hubVnetId = vnet.id;
-export const ipAddress = { address: publicIP.ipAddress, id: publicIP.id };
-export const firewallId = {
-  address: firewall.ipConfigurations.apply((c) => c![0]!.privateIPAddress!),
-  id: firewall.id,
+export const ipAddress = {
+  address: firewallInfo.publicIP.ipAddress,
+  id: firewallInfo.publicIP.id,
+};
+export const firewall = {
+  address: firewallInfo.firewall.ipConfigurations.apply(
+    (c) => c![0]!.privateIPAddress!,
+  ),
+  id: firewallInfo.firewall.id,
 };

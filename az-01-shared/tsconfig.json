@@ -3,7 +3,4 @@
     "files": [
         "index.ts"
     ],
-    "references": [
-        { "path": "../az-commons" }
-    ]
 }
