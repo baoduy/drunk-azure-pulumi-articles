@@ -1,4 +1,4 @@
-name: az-03-aks-env
+name: az-03-aks-cluster
 runtime:
   name: nodejs
   options:

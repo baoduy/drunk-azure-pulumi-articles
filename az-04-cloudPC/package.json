@@ -1,0 +1,24 @@
+{
+    "name": "az-01-hub-vnet",
+    "main": "index.ts",
+    "scripts": {
+        "build": "NODE_OPTIONS=\"--max-old-space-size=8192\" npx tsc --noEmit",
+        "new-stack": "pulumi stack init --secrets-provider=passphrase",
+        "up": "pulumi up --yes --skip-preview",
+        "reup": "pulumi up --refresh --yes --skip-preview",
+        "destroy": "pulumi destroy --yes --skip-preview",
+        "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install --force",
+        "check": "npx depcheck --detailed",
+        "export": "pulumi stack export --file state.json",
+        "import": "pulumi stack import --file state.json"
+    },
+    "devDependencies": {
+        "@types/node": "^18.19.53",
+        "typescript": "^5.6.2"
+    },
+    "dependencies": {
+        "@az-commons": "file:../az-commons/bin",
+        "@pulumi/azure-native": "^2.63.0",
+        "@pulumi/pulumi": "^3.134.1"
+    }
+}
