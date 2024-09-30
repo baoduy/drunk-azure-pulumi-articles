@@ -19,17 +19,23 @@ export const subnetSpaces = {
   devOps: "192.168.32.128/27",
 };
 
+//A common type all resource output info
+export type ResourceOutput = { name: string; id: string };
+
 //Define the output type for reusable
 export type SharedStackOutput = {
-  rsGroupId: string;
-  logWorkspace: { id: string; customerId: string };
-  appInsight: { id: string; key: string };
-  vault: { id: string; readOnlyGroupId: string; writeGroupId: string };
+  rsGroup: ResourceOutput;
+  logWorkspace: ResourceOutput & { customerId: string };
+  appInsight: ResourceOutput & { key: string };
+  vault: ResourceOutput & {
+    readOnlyGroupId: string;
+    writeGroupId: string;
+  };
 };
 
 export type HubVnetOutput = {
-  rsGroupId: string;
-  hubVnetId: string;
-  ipAddress: { address: string; id: string };
-  firewall: { address: string; id: string };
+  rsGroup: ResourceOutput;
+  hubVnet: ResourceOutput;
+  ipAddress: ResourceOutput & { address: string };
+  firewall: ResourceOutput & { address: string };
 };

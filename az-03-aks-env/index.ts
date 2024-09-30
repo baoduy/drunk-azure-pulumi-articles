@@ -62,6 +62,8 @@ const aks = Aks(config.azGroups.aks, {
 });
 
 // Export the information that will be used in the other projects
-export const rsGroupId = rsGroup.id;
-export const aksVnetId = vnet.id;
-export const aksId = aks.id;
+export default {
+  rsGroup: { name: rsGroup.name, id: rsGroup.id },
+  aksVnet: { name: vnet.name, id: vnet.id },
+  aks: { name: aks.name, id: aks.id },
+};

@@ -56,15 +56,19 @@ const firewallInfo = Firewall(config.azGroups.hub, {
 });
 
 // Export the information that will be used in the other projects
-export const rsGroupId = rsGroup.id;
-export const hubVnetId = vnet.id;
-export const ipAddress = {
-  address: firewallInfo.publicIP.ipAddress,
-  id: firewallInfo.publicIP.id,
-};
-export const firewall = {
-  address: firewallInfo.firewall.ipConfigurations.apply(
-    (c) => c![0]!.privateIPAddress!,
-  ),
-  id: firewallInfo.firewall.id,
+export default {
+  rsGroup: { name: rsGroup.name, id: rsGroup.id },
+  hubVnet: { name: vnet.name, id: vnet.id },
+  ipAddress: {
+    name: firewallInfo.publicIP.name,
+    address: firewallInfo.publicIP.ipAddress,
+    id: firewallInfo.publicIP.id,
+  },
+  firewall: {
+    name: firewallInfo.firewall.name,
+    address: firewallInfo.firewall.ipConfigurations.apply(
+      (c) => c![0]!.privateIPAddress!,
+    ),
+    id: firewallInfo.firewall.id,
+  },
 };
