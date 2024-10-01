@@ -12,15 +12,18 @@ importers:
         specifier: file:../az-commons
         version: az-commons@file:../az-commons(typescript@5.6.2)
       '@pulumi/azure-native':
-        specifier: ^2.63.0
-        version: 2.63.0(typescript@5.6.2)
+        specifier: ^2.64.0
+        version: 2.64.0(typescript@5.6.2)
       '@pulumi/pulumi':
         specifier: ^3.134.1
         version: 3.134.1(typescript@5.6.2)
+      '@pulumi/random':
+        specifier: ^4.16.6
+        version: 4.16.6(typescript@5.6.2)
     devDependencies:
       '@types/node':
-        specifier: ^18.19.53
-        version: 18.19.53
+        specifier: ^22.7.4
+        version: 22.7.4
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
@@ -218,8 +221,8 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@pulumi/azure-native@2.63.0':
-    resolution: {integrity: sha512-DDQ5N88JLd4vZGx8myXzuYr+tJT+T6MR0fBpfgTi1wHzIY+OyMUcjTWavLC+1kNHjauPm9r9S+jkEE4iHw+nZg==}
+  '@pulumi/azure-native@2.64.0':
+    resolution: {integrity: sha512-wSsU9cULNyP82Uff31FCe85fxqKwVYGB/nWZTrhGs+37XWkIvtoFUwO4czizSgcGTkJoheGlWGJPKn+MsQxoAQ==}
 
   '@pulumi/pulumi@3.134.1':
     resolution: {integrity: sha512-uXUldyEsYbEXkqE3nPfgABnfgnXjQv3YkzkiigeOBzTF2+7rQe7C/9nMnMJHs4k5XMW5183t7bYMU/W4qUUVcA==}
@@ -235,6 +238,9 @@ packages:
 
   '@pulumi/query@0.3.0':
     resolution: {integrity: sha512-xfo+yLRM2zVjVEA4p23IjQWzyWl1ZhWOGobsBqRpIarzLvwNH/RAGaoehdxlhx4X92302DrpdIFgTICMN4P38w==}
+
+  '@pulumi/random@4.16.6':
+    resolution: {integrity: sha512-BFjUkkIR8EBQQhIC1kkmwVoFCFTyHqEttZ8L2Myr+1qSNs/wU4roMLd8k/TzPxTIqdDfOFB+37dncdil88Guug==}
 
   '@sigstore/bundle@2.3.2':
     resolution: {integrity: sha512-wueKWDk70QixNLB363yHc2D2ItTgYiMTdPwK8D9dKQMR3ZQ0c35IxP5xnwQ8cNLoCgCRcHf14kE+CLIvNX1zmA==}
@@ -288,8 +294,8 @@ packages:
   '@types/keyv@3.1.4':
     resolution: {integrity: sha512-BQ5aZNSCpj7D6K2ksrRCTmKRLEpnPvWDiLPfoGyhZ++8YtiK9d/3DBKPJgry359X/P1PfruyYwvnvwFjuEiEIg==}
 
-  '@types/node@18.19.53':
-    resolution: {integrity: sha512-GLxgUgHhDKO1Edw9Q0lvMbiO/IQXJwJlMaqxSGBXMpPy8uhkCs2iiPFaB2Q/gmobnFkckD3rqTBMVjXdwq+nKg==}
+  '@types/node@22.7.4':
+    resolution: {integrity: sha512-y+NPi1rFzDs1NdQHHToqeiX2TIS79SWEAw9GYhkkx8bD0ChpfqC+n2j5OXOCpzfojBEBt6DnEnnG9MY0zk1XLg==}
 
   '@types/responselike@1.0.3':
     resolution: {integrity: sha512-H/+L+UkTV33uf49PH5pCAUBVPNj2nDBXTN+qS1dOwyyg24l3CcicicCA7ca+HMvJBZcFgl5r8e+RR6elsb4Lyw==}
@@ -1027,8 +1033,8 @@ packages:
     engines: {node: '>=14.17'}
     hasBin: true
 
-  undici-types@5.26.5:
-    resolution: {integrity: sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==}
+  undici-types@6.19.8:
+    resolution: {integrity: sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==}
 
   unique-filename@3.0.0:
     resolution: {integrity: sha512-afXhuC55wkAmZ0P18QsVE6kp8JaxrEokN2HGIoIVv2ijHQd419H0+6EigAFcIzXeMIkcIkNBpB3L/DXB3cTS/g==}
@@ -1364,7 +1370,7 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@pulumi/azure-native@2.63.0(typescript@5.6.2)':
+  '@pulumi/azure-native@2.64.0(typescript@5.6.2)':
     dependencies:
       '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
     transitivePeerDependencies:
@@ -1412,6 +1418,15 @@ snapshots:
       - supports-color
 
   '@pulumi/query@0.3.0': {}
+
+  '@pulumi/random@4.16.6(typescript@5.6.2)':
+    dependencies:
+      '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
+    transitivePeerDependencies:
+      - bluebird
+      - supports-color
+      - ts-node
+      - typescript
 
   '@sigstore/bundle@2.3.2':
     dependencies:
@@ -1462,7 +1477,7 @@ snapshots:
     dependencies:
       '@types/http-cache-semantics': 4.0.4
       '@types/keyv': 3.1.4
-      '@types/node': 18.19.53
+      '@types/node': 22.7.4
       '@types/responselike': 1.0.3
 
   '@types/google-protobuf@3.15.12': {}
@@ -1471,15 +1486,15 @@ snapshots:
 
   '@types/keyv@3.1.4':
     dependencies:
-      '@types/node': 18.19.53
+      '@types/node': 22.7.4
 
-  '@types/node@18.19.53':
+  '@types/node@22.7.4':
     dependencies:
-      undici-types: 5.26.5
+      undici-types: 6.19.8
 
   '@types/responselike@1.0.3':
     dependencies:
-      '@types/node': 18.19.53
+      '@types/node': 22.7.4
 
   '@types/semver@7.5.8': {}
 
@@ -1522,7 +1537,7 @@ snapshots:
 
   az-commons@file:../az-commons(typescript@5.6.2):
     dependencies:
-      '@pulumi/azure-native': 2.63.0(typescript@5.6.2)
+      '@pulumi/azure-native': 2.64.0(typescript@5.6.2)
       '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
     transitivePeerDependencies:
       - bluebird
@@ -2077,7 +2092,7 @@ snapshots:
       '@protobufjs/path': 1.1.2
       '@protobufjs/pool': 1.1.0
       '@protobufjs/utf8': 1.1.0
-      '@types/node': 18.19.53
+      '@types/node': 22.7.4
       long: 5.2.3
 
   pump@3.0.2:
@@ -2239,7 +2254,7 @@ snapshots:
 
   typescript@5.6.2: {}
 
-  undici-types@5.26.5: {}
+  undici-types@6.19.8: {}
 
   unique-filename@3.0.0:
     dependencies:

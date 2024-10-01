@@ -1,5 +1,5 @@
 {
-    "name": "az-01-hub-vnet",
+    "name": "az-02-hub-vnet",
     "main": "index.ts",
     "scripts": {
         "build": "NODE_OPTIONS=\"--max-old-space-size=8192\" npx tsc --noEmit",
@@ -13,12 +13,12 @@
         "import": "pulumi stack import --file state.json"
     },
     "devDependencies": {
-        "@types/node": "^18.19.53",
+        "@types/node": "^22.7.4",
         "typescript": "^5.6.2"
     },
     "dependencies": {
         "@az-commons": "file:../az-commons",
-        "@pulumi/azure-native": "^2.63.0",
+        "@pulumi/azure-native": "^2.64.0",
         "@pulumi/pulumi": "^3.134.1"
     }
 }

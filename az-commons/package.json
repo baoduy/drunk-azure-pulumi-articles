@@ -9,7 +9,8 @@
     "name": "@az-common"
   },
   "scripts": {
-    "build": "npx tsc --noEmit"
+    "build": "npx tsc --noEmit",
+    "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install --force"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,7 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@pulumi/azure-native": "^2.63.0",
+    "@pulumi/azure-native": "^2.64.0",
     "@pulumi/pulumi": "^3.134.1"
   }
 }
