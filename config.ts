@@ -37,5 +37,6 @@ export type HubVnetOutput = {
   rsGroup: ResourceOutput;
   hubVnet: ResourceOutput;
   ipAddress: ResourceOutput & { address: string };
+  firewallPolicy: ResourceOutput;
   firewall: ResourceOutput & { address: string };
 };

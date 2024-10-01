@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@az-commons':
-        specifier: file:../az-commons/output
-        version: output@file:../az-commons/output
+        specifier: file:../az-commons
+        version: az-commons@file:../az-commons(typescript@5.6.2)
       '@pulumi/azure-native':
         specifier: ^2.63.0
         version: 2.63.0(typescript@5.6.2)
@@ -364,6 +364,9 @@ packages:
 
   argparse@1.0.10:
     resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
+
+  az-commons@file:../az-commons:
+    resolution: {directory: ../az-commons, type: directory}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -806,9 +809,6 @@ packages:
   onetime@5.1.2:
     resolution: {integrity: sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==}
     engines: {node: '>=6'}
-
-  output@file:../az-commons/output:
-    resolution: {directory: ../az-commons/output, type: directory}
 
   p-cancelable@2.1.1:
     resolution: {integrity: sha512-BZOr3nRQHOntUjTrH8+Lh54smKHoHyur8We1V8DSMVrl5A2malOOwuJRnKRDjSnkoeBh4at6BwEnb5I7Jl31wg==}
@@ -1567,6 +1567,16 @@ snapshots:
     dependencies:
       sprintf-js: 1.0.3
 
+  az-commons@file:../az-commons(typescript@5.6.2):
+    dependencies:
+      '@pulumi/azure-native': 2.63.0(typescript@5.6.2)
+      '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
+    transitivePeerDependencies:
+      - bluebird
+      - supports-color
+      - ts-node
+      - typescript
+
   balanced-match@1.0.2: {}
 
   bin-links@4.0.4:
@@ -2021,8 +2031,6 @@ snapshots:
   onetime@5.1.2:
     dependencies:
       mimic-fn: 2.1.0
-
-  output@file:../az-commons/output: {}
 
   p-cancelable@2.1.1: {}
 

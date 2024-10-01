@@ -1,1 +1,1 @@
-/// <reference types="@az-commons" />
+///<reference types="@az-commons" />

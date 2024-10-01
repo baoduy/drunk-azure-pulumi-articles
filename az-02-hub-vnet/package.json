@@ -17,7 +17,7 @@
         "typescript": "^5.6.2"
     },
     "dependencies": {
-        "@az-commons": "file:../az-commons/bin",
+        "@az-commons": "file:../az-commons",
         "@pulumi/azure-native": "^2.63.0",
         "@pulumi/pulumi": "^3.134.1"
     }

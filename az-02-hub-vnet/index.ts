@@ -64,6 +64,7 @@ export default {
     address: firewallInfo.publicIP.ipAddress,
     id: firewallInfo.publicIP.id,
   },
+  firewallPolicy: { name: rules.policy.name, id: rules.policy.id },
   firewall: {
     name: firewallInfo.firewall.name,
     address: firewallInfo.firewall.ipConfigurations.apply(

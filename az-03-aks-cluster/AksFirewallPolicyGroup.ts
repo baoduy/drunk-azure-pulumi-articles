@@ -1,4 +1,4 @@
-import { subnetSpaces } from "../../config";
+import { subnetSpaces } from "../config";
 import { currentRegionCode, getName } from "@az-commons";
 import * as pulumi from "@pulumi/pulumi";
 import * as inputs from "@pulumi/azure-native/types/input";

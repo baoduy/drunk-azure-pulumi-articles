@@ -1,6 +1,5 @@
 {
     "extends": "../tsconfig.json",
-    "include": ["type.d.ts"],
     "files": [
         "index.ts"
     ],
