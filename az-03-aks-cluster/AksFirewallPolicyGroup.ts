@@ -1,7 +1,8 @@
 import { subnetSpaces } from "../../config";
-import { currentRegionCode } from "@az-commons";
+import { currentRegionCode, getName } from "@az-commons";
 import * as pulumi from "@pulumi/pulumi";
 import * as inputs from "@pulumi/azure-native/types/input";
+import * as network from "@pulumi/azure-native/network";
 
 const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
   // Network Rule for AKS
@@ -44,4 +45,38 @@ const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [
   },
 ];
 
-export default { appRules, netRules };
+export default (
+  name: string,
+  {
+    rsGroupName,
+    policyName,
+  }: {
+    policyName: pulumi.Input<string>;
+    rsGroupName: pulumi.Input<string>;
+  },
+) =>
+  new network.FirewallPolicyRuleCollectionGroup(getName(name, "fw-group"), {
+    resourceGroupName: rsGroupName,
+    firewallPolicyName: policyName,
+    priority: 300,
+    ruleCollections: [
+      {
+        name: "net-rules-collection",
+        priority: 300,
+        ruleCollectionType: "FirewallPolicyFilterRuleCollection",
+        action: {
+          type: network.FirewallPolicyFilterRuleCollectionActionType.Allow,
+        },
+        rules: netRules,
+      },
+      {
+        name: "app-rules-collection",
+        priority: 301,
+        ruleCollectionType: "FirewallPolicyFilterRuleCollection",
+        action: {
+          type: network.FirewallPolicyFilterRuleCollectionActionType.Allow,
+        },
+        rules: appRules,
+      },
+    ],
+  });

@@ -1,6 +1,6 @@
 import * as network from "@pulumi/azure-native/network";
 import * as resources from "@pulumi/azure-native/resources";
-import aksPolicyGroup from "./aksPolicyGroup";
+//import aksPolicyGroup from "./aksPolicyGroup";
 import devopsPolicyGroup from "./devopsPolicyGroup";
 import cloudpcPolicyGroup from "./cloudpcPolicyGroup";
 import * as pulumi from "@pulumi/pulumi";
@@ -86,8 +86,8 @@ export default (
   const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [];
 
   // Policy Groups
-  netRules.push(...aksPolicyGroup.netRules);
-  appRules.push(...aksPolicyGroup.appRules);
+  //netRules.push(...aksPolicyGroup.netRules);
+  //appRules.push(...aksPolicyGroup.appRules);
   netRules.push(...devopsPolicyGroup.netRules);
   appRules.push(...devopsPolicyGroup.appRules);
   netRules.push(...cloudpcPolicyGroup.netRules);

@@ -4,7 +4,7 @@ import * as network from "@pulumi/azure-native/network";
 import * as inputs from "@pulumi/azure-native/types/input";
 import { getName } from "@az-commons";
 
-/**By default VNet allows to access to internet so we will create an NetworkSecurityGroup to block it.
+/**By default, VNet allows to access to internet so we will create an NetworkSecurityGroup to block it.
  * ONly allows Vnet to Vnet and Vnet to private Firewall address communication
  * */
 const createSecurityGroup = (

@@ -6,7 +6,7 @@
         "declaration": true,
         "outDir": "bin"
     },
-    "include": ["**/*.ts"],
+    "include": ["**/*.ts","**/*.d.ts"],
     "files": [
         "index.ts"
     ]

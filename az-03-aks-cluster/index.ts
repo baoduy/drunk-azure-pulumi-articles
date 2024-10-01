@@ -16,6 +16,8 @@ const hubVnetStack = StackReference(
 // Create Vnet
 const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks));
 
+//Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
+
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.aks, {
   rsGroup,
@@ -52,7 +54,7 @@ const vnet = VNet(config.azGroups.aks, {
     },
   ],
   //peering to hub vnet
-  peeringVnetId: hubVnetStack.hubVnetId,
+  peeringVnetId: hubVnetStack.hubVnet.id,
 });
 
 const aks = Aks(config.azGroups.aks, {
