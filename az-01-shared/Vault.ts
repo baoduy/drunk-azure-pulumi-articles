@@ -1,6 +1,6 @@
-import { getName, tenantId } from '@az-commons'
-import * as azure from '@pulumi/azure-native'
-import * as ad from '@pulumi/azuread'
+import { getName, tenantId } from '@az-commons';
+import * as azure from '@pulumi/azure-native';
+import * as ad from '@pulumi/azuread';
 
 export default (
     name: string,
@@ -9,23 +9,24 @@ export default (
         retentionInDays = 7,
         rsGroup,
     }: {
-        retentionInDays?: number
-        rsGroup: azure.resources.ResourceGroup
+        retentionInDays?: number;
+        rsGroup: azure.resources.ResourceGroup;
     }
 ) => {
-    const vaultName = getName(name, 'vlt')
+    const vaultName = getName(name, 'vlt');
     const vault = new azure.keyvault.Vault(
         vaultName,
         {
             resourceGroupName: rsGroup.name,
             properties: {
+                //This must be enabled for VM Disk encryption
+                enablePurgeProtection: true,
+                enabledForDiskEncryption: true,
                 //soft delete min value is '7' and max is '90'
                 softDeleteRetentionInDays: retentionInDays,
                 //Must be authenticated with EntraID for accessing.
                 enableRbacAuthorization: true,
                 enabledForDeployment: true,
-                enabledForDiskEncryption: true,
-
                 tenantId,
                 sku: {
                     name: azure.keyvault.SkuName.Standard,
@@ -34,7 +35,7 @@ export default (
             },
         },
         { dependsOn: rsGroup }
-    )
+    );
 
     /** As the key vault is require Rbac authentication.
      * So We will create 2 EntraID groups for ReadOnly and Write access to this Key Vault
@@ -42,11 +43,11 @@ export default (
     const vaultReadOnlyGroup = new ad.Group(`${vaultName}-readOnly`, {
         displayName: `AZ ROL ${vaultName.toUpperCase()} READONLY`,
         securityEnabled: true,
-    })
+    });
     const vaultWriteGroup = new ad.Group(`${vaultName}-write`, {
         displayName: `AZ ROL ${vaultName.toUpperCase()} WRITE`,
         securityEnabled: true,
-    })
+    });
 
     /**
      * These roles allow read access to the secrets in the Key Vault, including keys, certificates, and secrets.
@@ -59,7 +60,7 @@ export default (
      */
 
     //ReadOnly Roles
-    ;[
+    [
         {
             name: 'Key Vault Crypto Service Encryption User',
             id: 'e147488a-f6f5-4113-8e2d-b22465e65bf6',
@@ -94,10 +95,10 @@ export default (
                 },
                 { dependsOn: [vault, vaultReadOnlyGroup] }
             )
-    )
+    );
 
     //Write Roles
-    ;[
+    [
         {
             name: 'Key Vault Certificates Officer',
             id: 'a4417e6f-fecd-4de8-b567-7b0420556985',
@@ -128,7 +129,7 @@ export default (
                 },
                 { dependsOn: [vault, vaultWriteGroup] }
             )
-    )
+    );
 
-    return { vault, vaultReadOnlyGroup, vaultWriteGroup }
-}
+    return { vault, vaultReadOnlyGroup, vaultWriteGroup };
+};

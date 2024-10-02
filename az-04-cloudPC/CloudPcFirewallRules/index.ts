@@ -1,4 +1,6 @@
+import { getName } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
+import * as inputs from '@pulumi/azure-native/types/input';
 import * as pulumi from '@pulumi/pulumi';
 import cloudPCRules from './cloudpcPolicyGroup';
 import devOpsRules from './devopsPolicyGroup';
@@ -15,7 +17,8 @@ export default (
 ) => {
     const netRules = [...cloudPCRules.netRules, ...devOpsRules.netRules];
     const appRules = [...cloudPCRules.appRules, ...devOpsRules.appRules];
-    const ruleCollections = [];
+    const ruleCollections: pulumi.Input<inputs.network.FirewallPolicyFilterRuleCollectionArgs>[] =
+        [];
 
     if (netRules.length > 0) {
         ruleCollections.push({
@@ -47,7 +50,7 @@ export default (
         {
             resourceGroupName: rsGroupName,
             firewallPolicyName: policyName,
-            priority: 300,
+            priority: 301,
             ruleCollections,
         }
     );

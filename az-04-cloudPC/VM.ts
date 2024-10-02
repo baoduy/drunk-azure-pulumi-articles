@@ -14,7 +14,7 @@ type VaultInfo = {
 /**
  * Generate the username and password for the vm
  * */
-const generateLogin = (name: string, vaultInfo: VaultInfo) => {
+const generateLogin = (name: string, vault: VaultInfo) => {
     const usernameKey = getName(name, 'username');
     const username = new random.RandomString(usernameKey, {
         length: 15,
@@ -34,7 +34,7 @@ const generateLogin = (name: string, vaultInfo: VaultInfo) => {
             new azure.keyvault.Secret(
                 item.name,
                 {
-                    ...vaultInfo,
+                    ...vault,
                     secretName: item.name,
                     properties: { value: item.value },
                 },
@@ -43,6 +43,25 @@ const generateLogin = (name: string, vaultInfo: VaultInfo) => {
     );
 
     return { username, password };
+};
+
+const createVmEncryptSecret = (name: string, vault: VaultInfo) => {
+    const randomPass = new random.RandomPassword(`${name}-password`, {
+        length: 50,
+        special: true,
+        numeric: true,
+        lower: true,
+        upper: true,
+    });
+    return new azure.keyvault.Secret(
+        name,
+        {
+            ...vault,
+            secretName: name,
+            properties: { value: randomPass.result },
+        },
+        { dependsOn: randomPass }
+    );
 };
 
 /**
@@ -76,8 +95,6 @@ export default (
     }
 ) => {
     const vmName = getName(name, 'vm');
-    //Create VM encryption Key
-    const vmKey = createEncryptionKey(vmName, vault);
     //Create VM login info
     const loginInfo = generateLogin(vmName, vault);
 
@@ -115,12 +132,13 @@ export default (
             //az feature register --name EncryptionAtHost  --namespace Microsoft.Compute
             securityProfile: { encryptionAtHost: true },
             osProfile: {
+                computerName: vmName,
                 adminUsername: loginInfo.username.result,
                 adminPassword: loginInfo.password.result,
-
                 allowExtensionOperations: true,
                 linuxConfiguration: {
                     //ssh: { publicKeys: [{ keyData: linux.sshPublicKey! }] },
+                    //TODO: this shall be set as 'true' when ssh is provided
                     disablePasswordAuthentication: false,
                     provisionVMAgent: true,
                     patchSettings: {
@@ -152,27 +170,6 @@ export default (
                     caching: 'ReadWrite',
                     createOption: 'FromImage',
                     osType: azure.compute.OperatingSystemTypes.Linux,
-
-                    encryptionSettings: {
-                        diskEncryptionKey: diskEncryptionSet
-                            ? {
-                                  secretUrl: diskEncryptionSet.id,
-                                  sourceVault: {
-                                      id: vault!.id,
-                                  },
-                              }
-                            : undefined,
-                        keyEncryptionKey: vmKey
-                            ? {
-                                  keyUrl: vmKey.keyUri,
-                                  sourceVault: {
-                                      id: vault!.id,
-                                  },
-                              }
-                            : undefined,
-                        enabled: true,
-                    },
-
                     managedDisk: {
                         diskEncryptionSet: { id: diskEncryptionSet.id },
                         storageAccountType:
@@ -214,7 +211,7 @@ export default (
                 new azure.compute.VirtualMachineExtension(
                     `${n}-devops-extension`,
                     {
-                        vmExtensionName: `${n}/TeamServicesAgentLinux`,
+                        vmExtensionName: 'TeamServicesAgentLinux',
                         vmName: n,
                         resourceGroupName: rsGroup.name,
                         enableAutomaticUpgrade: false,

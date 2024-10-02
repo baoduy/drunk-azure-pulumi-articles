@@ -46,41 +46,45 @@ const createUserAssignIdentity = (
  * Create Encryption Key on Key Vault
  * */
 export const createEncryptionKey = (name: string, vault: VaultInfo) =>
-    new azure.keyvault.Key(name, {
-        ...vault,
-        keyName: name,
-        properties: {
-            kty: azure.keyvault.JsonWebKeyType.RSA,
-            keySize: 4096, //2048 | 3072 | 4096
-            keyOps: [
-                'encrypt',
-                'decrypt',
-                'sign',
-                'verify',
-                'wrapKey',
-                'unwrapKey',
-            ],
-            attributes: { enabled: true },
-            rotationPolicy: {
-                attributes: {
-                    // Rotate every 365 days
-                    expiryTime: 'P365D',
-                },
-                lifetimeActions: [
-                    {
-                        action: {
-                            type: azure.keyvault.KeyRotationPolicyActionType
-                                .Rotate,
-                        },
-                        trigger: {
-                            // Trigger rotation 7 days before expiry
-                            timeBeforeExpiry: 'P7D',
-                        },
-                    },
+    new azure.keyvault.Key(
+        name,
+        {
+            ...vault,
+            keyName: name,
+            properties: {
+                kty: azure.keyvault.JsonWebKeyType.RSA,
+                keySize: 4096, //2048 | 3072 | 4096
+                keyOps: [
+                    'encrypt',
+                    'decrypt',
+                    'sign',
+                    'verify',
+                    'wrapKey',
+                    'unwrapKey',
                 ],
+                attributes: { enabled: true },
+                rotationPolicy: {
+                    attributes: {
+                        // Rotate every 365 days
+                        expiryTime: 'P365D',
+                    },
+                    lifetimeActions: [
+                        {
+                            action: {
+                                type: azure.keyvault.KeyRotationPolicyActionType
+                                    .Rotate,
+                            },
+                            trigger: {
+                                // Trigger rotation 7 days before expiry
+                                timeBeforeExpiry: 'P7D',
+                            },
+                        },
+                    ],
+                },
             },
         },
-    });
+        { retainOnDelete: true }
+    );
 
 export default (
     name: string,
@@ -106,7 +110,7 @@ export default (
                     .SystemAssigned_UserAssigned,
                 userAssignedIdentities: [uid.id],
             },
-            activeKey: { keyUrl: key.keyUri },
+            activeKey: { keyUrl: key.keyUriWithVersion },
         },
         {
             dependsOn: [rsGroup, key, uid],

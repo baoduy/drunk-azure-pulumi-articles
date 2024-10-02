@@ -81,7 +81,7 @@ export default (
         rsGroup,
         subnets,
         routes,
-        peeringVnetId,
+        peeringVnet,
         securityRules,
     }: {
         rsGroup: resources.ResourceGroup;
@@ -128,7 +128,6 @@ export default (
                 routeTable: routeTable ? { id: routeTable.id } : undefined,
             })),
         },
-        // Ensure the virtual network dependency
         {
             dependsOn: routeTable ? [sgroup, routeTable] : sgroup,
             //Ignore this property as the peering will be manage by instance of VirtualNetworkPeering

@@ -12,7 +12,7 @@ const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
 //Apply Firewall Rules
-FirewallRule(config.azGroups.aks, {
+FirewallRule(config.azGroups.cloudPC, {
     rsGroupName: hubVnetStack.rsGroup.name,
     policyName: hubVnetStack.firewallPolicy.name,
 });
@@ -92,8 +92,8 @@ const vm = VM('devops-agent-01', {
     vnet,
     azureDevOps: {
         VSTSAccountUrl: 'https://dev.azure.com/transwap',
-        TeamProject: 'Transwap',
-        DeploymentGroup: 'private-pool',
+        TeamProject: 'Research',
+        DeploymentGroup: 'cloud-agents',
         PATToken: new pulumi.Config().requireSecret('devops-pat'),
     },
 });
@@ -102,5 +102,5 @@ const vm = VM('devops-agent-01', {
 export default {
     rsGroup: { name: rsGroup.name, id: rsGroup.id },
     cloudPcVnet: { name: vnet.name, id: vnet.id },
-    devopsAgent01: { name: vm, id: vm.id },
+    devopsAgent01: { name: vm.name, id: vm.id },
 };
