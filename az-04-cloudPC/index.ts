@@ -91,7 +91,7 @@ const vm = VM('devops-agent-01', {
     vault,
     vnet,
     azureDevOps: {
-        VSTSAccountUrl: 'https://dev.azure.com/transwap',
+        VSTSAccountUrl: 'transwap',
         TeamProject: 'Research',
         DeploymentGroup: 'cloud-agents',
         PATToken: new pulumi.Config().requireSecret('devops-pat'),

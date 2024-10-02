@@ -206,6 +206,7 @@ export default (
 
     //Install AzureDevOps extensions
     if (azureDevOps) {
+        //Follow the instruction here: https://learn.microsoft.com/en-us/azure/devops/pipelines/release/deployment-groups/howto-provision-deployment-group-agents?view=azure-devops
         vm.name.apply(
             (n) =>
                 new azure.compute.VirtualMachineExtension(
@@ -221,9 +222,10 @@ export default (
                         typeHandlerVersion: '1.0',
                         autoUpgradeMinorVersion: true,
                         settings: {
-                            VSTSAccountUrl: azureDevOps.VSTSAccountUrl,
+                            VSTSAccountName: azureDevOps.VSTSAccountUrl,
                             TeamProject: azureDevOps.TeamProject,
                             DeploymentGroup: azureDevOps.DeploymentGroup,
+                            AgentMajorVersion: '3',
                             AgentName: vmName,
                         },
                         protectedSettings: {

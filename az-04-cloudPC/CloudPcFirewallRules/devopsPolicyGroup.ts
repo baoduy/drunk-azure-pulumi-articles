@@ -1,17 +1,26 @@
-import { subnetSpaces } from "../../config";
-import * as pulumi from "@pulumi/pulumi";
-import * as inputs from "@pulumi/azure-native/types/input";
+import * as inputs from '@pulumi/azure-native/types/input';
+import * as pulumi from '@pulumi/pulumi';
+import { subnetSpaces } from '../../config';
 
 const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
-  {
-    ruleType: "NetworkRule",
-    name: "devops-to-aks",
-    description: "Allows devops to access aks for deployment purposes.",
-    ipProtocols: ["TCP"],
-    sourceAddresses: [subnetSpaces.devOps],
-    destinationAddresses: ["*"],
-    destinationPorts: ["443"],
-  },
+    {
+        ruleType: 'NetworkRule',
+        name: 'devops-to-aks',
+        description: 'Allows devops to internet.',
+        ipProtocols: ['TCP', 'UDP'],
+        sourceAddresses: [subnetSpaces.devOps],
+        destinationAddresses: ['*'],
+        destinationPorts: ['443', '80'],
+    },
+    // {
+    //     ruleType: 'NetworkRule',
+    //     name: 'devops-to-ubuntu',
+    //     description: 'Allows devops to ubuntu.',
+    //     ipProtocols: ['TCP', 'UDP'],
+    //     sourceAddresses: [subnetSpaces.devOps],
+    //     destinationAddresses: ['*'],
+    //     destinationPorts: ['443', '80'],
+    // },
 ];
 
 const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [];
