@@ -14,8 +14,9 @@ export default (
         sku?: azure.containerregistry.SkuName;
     }
 ) =>
+    //The registry name is only allows '^[a-zA-Z0-9]*$' so we will remove all dashes from the name.
     new azure.containerregistry.Registry(
-        getName(name, 'acr'),
+        getName(name, 'acr').replace(/-/g, ''),
         {
             resourceGroupName: rsGroup.name,
             sku: { name: sku },

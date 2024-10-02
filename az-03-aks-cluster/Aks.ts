@@ -1,26 +1,26 @@
-import { getName, tenantId } from '@az-commons'
-import * as azure from '@pulumi/azure-native'
-import * as ad from '@pulumi/azuread'
-import * as pulumi from '@pulumi/pulumi'
-import * as random from '@pulumi/random'
-import SshGenerator from './SshGenerator'
+import { getName, tenantId } from '@az-commons';
+import * as azure from '@pulumi/azure-native';
+import * as ad from '@pulumi/azuread';
+import * as pulumi from '@pulumi/pulumi';
+import * as random from '@pulumi/random';
+import SshGenerator from './SshGenerator';
 
 /** AKS required an Entra Application Registration with an Entra Admin Group inorder to enable the RBAC access.
  * We will create them here before create AKS resource.
  * */
 const createRBACIdentity = (name: string) => {
-    name = getName(name, 'Admin')
+    name = getName(name, 'Admin');
     //Create Entra Group
     const adminGroup = new ad.Group(name, {
         displayName: `AZ ROL ${name.toUpperCase()}`,
         securityEnabled: true,
-    })
+    });
     //Create Entra App Registration
     const appRegistration = new ad.ApplicationRegistration(name, {
         description: name,
         displayName: name,
         signInAudience: 'AzureADMyOrg',
-    })
+    });
     //Create App Client Secret
     const appSecret = new ad.ApplicationPassword(
         name,
@@ -28,10 +28,10 @@ const createRBACIdentity = (name: string) => {
             applicationId: appRegistration.id,
         },
         { dependsOn: appRegistration }
-    )
+    );
 
-    return { adminGroup, appRegistration, appSecret }
-}
+    return { adminGroup, appRegistration, appSecret };
+};
 
 /** AKS is required SSH key for Nodes access purposes.*/
 const createSsh = (
@@ -40,18 +40,18 @@ const createSsh = (
         vaultInfo,
     }: {
         vaultInfo?: {
-            resourceGroupName: pulumi.Input<string>
-            vaultName: pulumi.Input<string>
-        }
+            resourceGroupName: pulumi.Input<string>;
+            vaultName: pulumi.Input<string>;
+        };
     }
 ) => {
     //Create ssh
     const ssh = new SshGenerator(getName(name, 'ssh'), {
         password: new random.RandomPassword(name, { length: 50 }).result,
-    })
+    });
     //Store public key and private key to Vault
     if (vaultInfo) {
-        ;[
+        [
             { name: `${ssh.name}-publicKey`, value: ssh.publicKey },
             { name: `${ssh.name}-privateKey`, value: ssh.privateKey },
             { name: `${ssh.name}-password`, value: ssh.password },
@@ -72,11 +72,11 @@ const createSsh = (
                         retainOnDelete: true,
                     }
                 )
-        )
+        );
     }
 
-    return ssh
-}
+    return ssh;
+};
 
 /**
  * This AKS we will use Linux with vmSize is `Standard_B2ms` and enable auto scale min: 1 node and max 3 nodes.
@@ -93,24 +93,24 @@ export default (
         tier = azure.containerservice.ManagedClusterSKUTier.Free,
         vmSize = 'Standard_B2ms',
     }: {
-        rsGroup: azure.resources.ResourceGroup
-        acr?: azure.containerregistry.Registry
-        vnet: azure.network.VirtualNetwork
-        vmSize?: pulumi.Input<string>
-        nodeAdminUserName: pulumi.Input<string>
-        tier?: azure.containerservice.ManagedClusterSKUTier
-        logWorkspaceId?: pulumi.Input<string>
+        rsGroup: azure.resources.ResourceGroup;
+        acr?: azure.containerregistry.Registry;
+        vnet: azure.network.VirtualNetwork;
+        vmSize?: pulumi.Input<string>;
+        nodeAdminUserName: pulumi.Input<string>;
+        tier?: azure.containerservice.ManagedClusterSKUTier;
+        logWorkspaceId?: pulumi.Input<string>;
         vaultInfo?: {
-            resourceGroupName: pulumi.Input<string>
-            vaultName: pulumi.Input<string>
-        }
+            resourceGroupName: pulumi.Input<string>;
+            vaultName: pulumi.Input<string>;
+        };
     }
 ) => {
-    const aksIdentity = createRBACIdentity(name)
-    const ssh = createSsh(name, { vaultInfo })
+    const aksIdentity = createRBACIdentity(name);
+    const ssh = createSsh(name, { vaultInfo });
 
-    const aksName = getName(name, 'cluster')
-    const nodeResourceGroup = `${aksName}-nodes`
+    const aksName = getName(name, 'cluster');
+    const nodeResourceGroup = `${aksName}-nodes`;
 
     //Create AKS Cluster
     const aks = new azure.containerservice.ManagedCluster(
@@ -162,6 +162,7 @@ export default (
                     maxPods: 50,
                     enableFIPS: false,
                     enableNodePublicIP: false,
+                    //az feature register --name EncryptionAtHost  --namespace Microsoft.Compute
                     enableEncryptionAtHost: true,
                     //TODO: Enable this in PRD
                     enableUltraSSD: false,
@@ -220,7 +221,7 @@ export default (
                 vnet,
             ],
         }
-    )
+    );
 
     //If ACR is provided then grant permission to allows AKS to download image from ACR
     if (acr) {
@@ -238,8 +239,8 @@ export default (
                     '/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d',
             },
             { dependsOn: [aks, acr] }
-        )
+        );
     }
 
-    return aks
-}
+    return aks;
+};

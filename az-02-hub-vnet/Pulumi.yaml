@@ -1,4 +1,4 @@
-name: az-01-hub-vnet
+name: az-02-hub-vnet
 runtime:
   name: nodejs
   options:

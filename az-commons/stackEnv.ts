@@ -14,7 +14,9 @@ export const StackReference = <TOutput>(
     const stackRef = new pulumi.StackReference(
         `${organization}/${projectName}/${stack}`
     );
-    return stackRef.outputs as pulumi.Output<TOutput>;
+    return stackRef.outputs.apply(
+        (s) => s.default ?? s
+    ) as pulumi.Output<TOutput>;
 };
 
 console.log('Pulumi Environments:', {

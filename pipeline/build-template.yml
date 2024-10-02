@@ -1,0 +1,55 @@
+parameters:
+- name: stack
+  type: string
+- name: workDir
+  type: string
+- name: forceInstall
+  type: string
+  default: false
+- name: azureSubscription
+  type: string
+- name: npm_config_cache
+  type: string
+  default: $(Pipeline.Workspace)/.npm
+- name: buildPulumi
+  type: string
+  default: false
+
+steps:
+- checkout: self
+  submodules: true
+  persistCredentials: true
+
+- task: NodeTool@0
+  displayName: "install node"
+  inputs:
+    versionSpec: "20.x"
+
+- task: Cache@2
+  displayName: "cache npm"
+  inputs:
+    key: "${{ parameters.workDir }}/package-lock.json"
+    path: $(npm_config_cache)
+
+# install and build drunk-pulumi-azure
+- script: npm install --force --cache $(npm_config_cache)
+  displayName: "npm install drunk-pulumi"
+  condition: eq(${{ parameters.buildPulumi }}, true)
+  workingDirectory: drunk-pulumi-azure
+
+- script: "npm run ciBuild"
+  displayName: "build drunk-pulumi"
+  condition: eq(${{ parameters.buildPulumi }}, true)
+  workingDirectory: drunk-pulumi-azure
+
+- script: npm ci --no-audit --no-save --cache $(npm_config_cache)
+  condition: eq(${{ parameters.forceInstall }}, false)
+  displayName: "install ci"
+  workingDirectory: ${{ parameters.workDir }}
+
+- script: npm install --force --cache $(npm_config_cache)
+  condition: eq(${{ parameters.forceInstall }}, true)
+  displayName: "install install with force"
+  workingDirectory: ${{ parameters.workDir }}
+
+# install and build drunk-pulumi-azure

@@ -1,16 +1,13 @@
 import { getGroupName, StackReference } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
 import * as resources from '@pulumi/azure-native/resources';
-import * as pulumi from '@pulumi/pulumi';
 import * as config from '../config';
 import Firewall from './Firewall';
 import FirewallPolicy from './FirewallPolicy';
 import VNet from './VNet';
 
 //Reference to the output of `az-01-shared` and link workspace to firewall for log monitoring.
-const sharedStack = StackReference(
-    'az-01-shared'
-) as pulumi.Output<config.SharedStackOutput>;
+const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 
 // Create Hub Resource Group
 const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.hub));

@@ -89,8 +89,8 @@ export default (
             firewallName,
             {
                 resourceUri: firewall.id,
-                logAnalyticsDestinationType: 'AzureDiagnostics',
                 workspaceId: logWorkspaceId,
+
                 //Logs
                 logs: [
                     'AzureFirewallApplicationRule',
@@ -98,7 +98,11 @@ export default (
                     'AzureFirewallDnsProxy',
                 ].map((c) => ({
                     category: c,
-                    retentionPolicy: { enabled: false, days: 7 },
+                    retentionPolicy: {
+                        enabled: false,
+                        //TODO: For demo purpose the log is only 7 day however, it should be 30 days or longer in PRD
+                        days: 7,
+                    },
                     enabled: true,
                 })),
             },

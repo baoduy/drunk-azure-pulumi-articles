@@ -1,0 +1,51 @@
+parameters:
+- name: stack
+  type: string
+- name: workDir
+  type: string
+- name: azureSubscription
+  type: string
+
+steps:
+#Pulumi Refresh
+- task: Pulumi@1
+  displayName: "pulumi refresh"
+  continueOnError: true
+  condition: eq(variables['pulumi.refresh'], 'true')
+  env:
+    PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
+    NODE_OPTIONS: '--max-old-space-size=8192'
+  inputs:
+    azureSubscription: ${{ parameters.azureSubscription }}
+    command: "refresh"
+    cwd: ${{ parameters.workDir }}
+    stack: ${{ parameters.stack }}
+    args: "--yes --skip-preview"
+
+- task: Pulumi@1
+  displayName: "pulumi up after refresh"
+  condition: eq(variables['pulumi.refresh'], 'true')
+  continueOnError: true
+  env:
+    PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
+    NODE_OPTIONS: '--max-old-space-size=8192'
+  inputs:
+    azureSubscription: ${{ parameters.azureSubscription }}
+    command: "up"
+    cwd: ${{ parameters.workDir }}
+    stack: ${{ parameters.stack }}
+    args: "--yes --skip-preview"
+
+#Pulumi Up
+- task: Pulumi@1
+  displayName: "pulumi up"
+  continueOnError: false
+  env:
+    PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
+    NODE_OPTIONS: '--max-old-space-size=8192'
+  inputs:
+    azureSubscription: ${{ parameters.azureSubscription }}
+    command: "up"
+    cwd: ${{ parameters.workDir }}
+    stack: ${{ parameters.stack }}
+    args: "--yes --skip-preview"
