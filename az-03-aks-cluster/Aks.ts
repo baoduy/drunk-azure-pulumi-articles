@@ -46,15 +46,16 @@ const createSsh = (
     }
 ) => {
     //Create ssh
-    const ssh = new SshGenerator(getName(name, 'ssh'), {
+    const sshName = getName(name, 'ssh');
+    const ssh = new SshGenerator(sshName, {
         password: new random.RandomPassword(name, { length: 50 }).result,
     });
     //Store public key and private key to Vault
     if (vaultInfo) {
         [
-            { name: `${ssh.name}-publicKey`, value: ssh.publicKey },
-            { name: `${ssh.name}-privateKey`, value: ssh.privateKey },
-            { name: `${ssh.name}-password`, value: ssh.password },
+            { name: `${sshName}-publicKey`, value: ssh.publicKey },
+            { name: `${sshName}-privateKey`, value: ssh.privateKey },
+            { name: `${sshName}-password`, value: ssh.password },
         ].map(
             (s) =>
                 new azure.keyvault.Secret(
@@ -79,7 +80,7 @@ const createSsh = (
 };
 
 /**
- * This AKS we will use Linux with vmSize is `Standard_B2ms` and enable auto scale min: 1 node and max 3 nodes.
+ * This AKS we will use Linux with vmSize is `Standard_B2ms` and enable auto-scale min: 1 node and max 3 nodes.
  * */
 export default (
     name: string,
@@ -91,12 +92,16 @@ export default (
         vaultInfo,
         logWorkspaceId,
         tier = azure.containerservice.ManagedClusterSKUTier.Free,
+        osDiskSizeGB = 128,
+        osDiskType = azure.containerservice.OSDiskType.Managed,
         vmSize = 'Standard_B2ms',
     }: {
         rsGroup: azure.resources.ResourceGroup;
         acr?: azure.containerregistry.Registry;
         vnet: azure.network.VirtualNetwork;
         vmSize?: pulumi.Input<string>;
+        osDiskSizeGB?: pulumi.Input<number>;
+        osDiskType?: azure.containerservice.OSDiskType;
         nodeAdminUserName: pulumi.Input<string>;
         tier?: azure.containerservice.ManagedClusterSKUTier;
         logWorkspaceId?: pulumi.Input<string>;
@@ -158,7 +163,6 @@ export default (
                     ),
                     type: azure.containerservice.AgentPoolType
                         .VirtualMachineScaleSets,
-                    vmSize,
                     maxPods: 50,
                     enableFIPS: false,
                     enableNodePublicIP: false,
@@ -166,8 +170,9 @@ export default (
                     enableEncryptionAtHost: true,
                     //TODO: Enable this in PRD
                     enableUltraSSD: false,
-                    osDiskSizeGB: 256,
-                    osDiskType: azure.containerservice.OSDiskType.Ephemeral,
+                    osDiskSizeGB,
+                    osDiskType,
+                    vmSize,
                     kubeletDiskType: 'OS',
                     osSKU: 'Ubuntu',
                     osType: 'Linux',
@@ -234,7 +239,8 @@ export default (
                 principalId: aks.identityProfile.apply(
                     (i) => i!.kubeletidentity.objectId!
                 ),
-                roleAssignmentName: 'AcrPull',
+                //This the ID of ARCPull
+                roleAssignmentName: '7f951dda-4ed3-4680-a7ca-43fe172d538d',
                 roleDefinitionId:
                     '/providers/Microsoft.Authorization/roleDefinitions/7f951dda-4ed3-4680-a7ca-43fe172d538d',
             },

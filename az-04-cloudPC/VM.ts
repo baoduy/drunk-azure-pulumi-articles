@@ -46,12 +46,6 @@ const generateLogin = (name: string, vaultInfo: VaultInfo) => {
 };
 
 /**
- * Create Disk Encryption Set for VM
- * This requires a few step to be able to enable the VM disk encryption with custom key.
- */
-const createDiskEncryptionSet = (name: string, vaultInfo: VaultInfo) => {};
-
-/**
  * THis Vm will be a linux VM
  * - `username` and `password` will be generated using pulumi random and store in Key Vault.
  * - The AzureDevOps extension will be installed automatically and become a private AzureDevOps agent.

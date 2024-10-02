@@ -2,7 +2,7 @@ import { getGroupName, StackReference } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as pulumi from '@pulumi/pulumi';
 import * as config from '../config';
-import FirewallRule from './AksFirewallRules';
+import FirewallRule from './CloudPcFirewallRules';
 import DiskEncryptionSet from './DiskEncryptionSet';
 import VM from './VM';
 import VNet from './VNet';
@@ -70,7 +70,11 @@ const vnet = VNet(config.azGroups.cloudPC, {
         },
     ],
     //peering to hub vnet
-    peeringVnetId: hubVnetStack.hubVnet.id,
+    peeringVnet: {
+        name: hubVnetStack.hubVnet.name,
+        id: hubVnetStack.hubVnet.id,
+        resourceGroupName: hubVnetStack.rsGroup.name,
+    },
 });
 
 //Create Disk Encryption. This shall be able to share to multi VMs

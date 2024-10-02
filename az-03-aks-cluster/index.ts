@@ -10,6 +10,8 @@ import VNet from './VNet';
 const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
+hubVnetStack.apply((h) => console.log(h));
+
 //Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
 FirewallRule(config.azGroups.aks, {
     rsGroupName: hubVnetStack.rsGroup.name,
@@ -55,7 +57,11 @@ const vnet = VNet(config.azGroups.aks, {
         },
     ],
     //peering to hub vnet
-    peeringVnetId: hubVnetStack.hubVnet.id,
+    peeringVnet: {
+        name: hubVnetStack.hubVnet.name,
+        id: hubVnetStack.hubVnet.id,
+        resourceGroupName: hubVnetStack.rsGroup.name,
+    },
 });
 
 //Create Private Container Registry to AKS
