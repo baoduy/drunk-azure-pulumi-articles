@@ -2,7 +2,7 @@ import { getGroupName, getName, StackReference } from '@az-commons';
 import * as resources from '@pulumi/azure-native/resources';
 import * as config from '../config';
 import Aks from './Aks';
-import FirewallRule from './AksFirewallPolicyGroup';
+import FirewallRule from './AksFirewallRules';
 import ContainerRegistry from './ContainerRegistry';
 import VNet from './VNet';
 
@@ -10,14 +10,14 @@ import VNet from './VNet';
 const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
-// Create Vnet
-const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks));
-
 //Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
 FirewallRule(config.azGroups.aks, {
     rsGroupName: hubVnetStack.rsGroup.name,
     policyName: hubVnetStack.firewallPolicy.name,
 });
+
+// Create Vnet
+const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks));
 
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.aks, {

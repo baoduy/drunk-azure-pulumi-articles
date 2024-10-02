@@ -2,6 +2,7 @@ import { getGroupName, StackReference } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as pulumi from '@pulumi/pulumi';
 import * as config from '../config';
+import FirewallRule from './AksFirewallRules';
 import DiskEncryptionSet from './DiskEncryptionSet';
 import VM from './VM';
 import VNet from './VNet';
@@ -9,6 +10,12 @@ import VNet from './VNet';
 //Reference to the output of `az-01-shared` and `az-02-hub-vnet`.
 const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
+
+//Apply Firewall Rules
+FirewallRule(config.azGroups.aks, {
+    rsGroupName: hubVnetStack.rsGroup.name,
+    policyName: hubVnetStack.firewallPolicy.name,
+});
 
 //The vault Info from shared project
 const vault = {
@@ -22,8 +29,6 @@ const vault = {
 const rsGroup = new azure.resources.ResourceGroup(
     getGroupName(config.azGroups.cloudPC)
 );
-
-//Create FirewallPolicyGroup
 
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.cloudPC, {
