@@ -1,15 +1,27 @@
-import { getGroupName } from '@az-commons'
-import * as azure from '@pulumi/azure-native'
-import { StackReference } from 'az-commons'
-import * as config from '../config'
-import VNet from './VNet'
+import { getGroupName, StackReference } from '@az-commons';
+import * as azure from '@pulumi/azure-native';
+import * as pulumi from '@pulumi/pulumi';
+import * as config from '../config';
+import DiskEncryptionSet from './DiskEncryptionSet';
+import VM from './VM';
+import VNet from './VNet';
 
-const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet')
+//Reference to the output of `az-01-shared` and `az-02-hub-vnet`.
+const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
+const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
+
+//The vault Info from shared project
+const vault = {
+    id: sharedStack.vault.id,
+    vaultName: sharedStack.vault.name,
+    resourceGroupName: sharedStack.rsGroup.name,
+    readOnlyGroupId: sharedStack.vault.readOnlyGroupId,
+};
 
 // Create Shared Resource Group
 const rsGroup = new azure.resources.ResourceGroup(
     getGroupName(config.azGroups.cloudPC)
-)
+);
 
 //Create FirewallPolicyGroup
 
@@ -54,12 +66,32 @@ const vnet = VNet(config.azGroups.cloudPC, {
     ],
     //peering to hub vnet
     peeringVnetId: hubVnetStack.hubVnet.id,
-})
+});
 
-//Create DevOps VM
+//Create Disk Encryption. This shall be able to share to multi VMs
+const diskEncryptionSet = DiskEncryptionSet(config.azGroups.cloudPC, {
+    rsGroup,
+    vault,
+});
+
+//Create DevOps Agent 01 VM
+const vm = VM('devops-agent-01', {
+    diskEncryptionSet,
+    rsGroup,
+    vmSize: 'Standard_B2s',
+    vault,
+    vnet,
+    azureDevOps: {
+        VSTSAccountUrl: 'https://dev.azure.com/transwap',
+        TeamProject: 'Transwap',
+        DeploymentGroup: 'private-pool',
+        PATToken: new pulumi.Config().requireSecret('devops-pat'),
+    },
+});
 
 // Export the information that will be used in the other projects
 export default {
     rsGroup: { name: rsGroup.name, id: rsGroup.id },
     cloudPcVnet: { name: vnet.name, id: vnet.id },
-}
+    devopsAgent01: { name: vm, id: vm.id },
+};

@@ -4,7 +4,7 @@
         "outDir": "bin",
         "target": "es2020",
         "lib": ["es2020", "es5"],
-        "module": "commonjs",
+        "module": "CommonJS",
         "moduleResolution": "node",
         "baseUrl": ".",
         "sourceMap": false,

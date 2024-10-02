@@ -1,6 +1,5 @@
 import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
-import { existsSync, readdirSync } from 'fs';
-import { platform } from 'os';
+import { existsSync, promises } from 'node:fs';
 import { join, resolve } from 'path';
 
 // get library path
@@ -13,7 +12,7 @@ async function spawnAsync(
 ) {
     const child = spawn(command, args, options);
 
-    const exitCode = await new Promise((resolve, reject) => {
+    const exitCode = await new Promise((resolve) => {
         child.on('close', resolve);
     });
 
@@ -24,11 +23,16 @@ async function spawnAsync(
 
 async function main() {
     const action = process.argv[process.argv.length - 1];
-    for (const mod of readdirSync(lib)) {
-        const modPath = join(lib, mod);
-        // ensure path has package.json
-        if (!existsSync(join(modPath, 'package.json'))) return;
+    const folders = (await promises.readdir(lib))
+        .map((f) => {
+            const modPath = join(lib, f);
+            if (existsSync(join(modPath, 'package.json'))) return f;
+            return undefined;
+        })
+        .filter((f) => f !== undefined);
 
+    for (const f of folders) {
+        const modPath = join(lib, f!);
         const options = {
             env: process.env,
             cwd: modPath,
@@ -43,7 +47,7 @@ async function main() {
             await spawnAsync('pnpm', ['run', 'build'], options);
         else if (action === 'update')
             await spawnAsync('pnpm', ['run', 'update'], options);
-        else await spawnAsync('pnpm', ['install', '--force'], options);
+        else await spawnAsync('pnpm', ['install'], options);
     }
 }
 

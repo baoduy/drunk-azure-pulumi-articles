@@ -1,23 +1,23 @@
-import { getGroupName, getName, StackReference } from '@az-commons'
-import * as resources from '@pulumi/azure-native/resources'
-import * as config from '../config'
-import Aks from './Aks'
-import FirewallRule from './AksFirewallPolicyGroup'
-import ContainerRegistry from './ContainerRegistry'
-import VNet from './VNet'
+import { getGroupName, getName, StackReference } from '@az-commons';
+import * as resources from '@pulumi/azure-native/resources';
+import * as config from '../config';
+import Aks from './Aks';
+import FirewallRule from './AksFirewallPolicyGroup';
+import ContainerRegistry from './ContainerRegistry';
+import VNet from './VNet';
 
-//Reference to the output of `az-01-shared` and link workspace to firewall for log monitoring.
-const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared')
-const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet')
+//Reference to the output of `az-01-shared` and `az-02-hub-vnet`.
+const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
+const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
 // Create Vnet
-const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks))
+const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks));
 
 //Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
 FirewallRule(config.azGroups.aks, {
     rsGroupName: hubVnetStack.rsGroup.name,
     policyName: hubVnetStack.firewallPolicy.name,
-})
+});
 
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.aks, {
@@ -56,10 +56,10 @@ const vnet = VNet(config.azGroups.aks, {
     ],
     //peering to hub vnet
     peeringVnetId: hubVnetStack.hubVnet.id,
-})
+});
 
 //Create Private Container Registry to AKS
-const acr = ContainerRegistry(config.azGroups.aks, { rsGroup })
+const acr = ContainerRegistry(config.azGroups.aks, { rsGroup });
 
 //Create AKS cluster
 const aks = Aks(config.azGroups.aks, {
@@ -74,7 +74,7 @@ const aks = Aks(config.azGroups.aks, {
     vmSize: 'Standard_B2ms',
     acr,
     vnet,
-})
+});
 
 // Export the information that will be used in the other projects
 export default {
@@ -82,4 +82,4 @@ export default {
     arc: { name: acr.name, id: acr.id },
     aksVnet: { name: vnet.name, id: vnet.id },
     aks: { name: aks.name, id: aks.id },
-}
+};
