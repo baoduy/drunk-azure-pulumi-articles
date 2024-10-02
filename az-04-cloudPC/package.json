@@ -8,7 +8,7 @@
         "up": "pulumi up --yes --skip-preview",
         "reup": "pulumi up --refresh --yes --skip-preview",
         "destroy": "pulumi destroy --yes --skip-preview",
-        "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install --force",
+        "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install",
         "check": "npx depcheck --detailed",
         "export": "pulumi stack export --file state.json",
         "import": "pulumi stack import --file state.json"
@@ -19,9 +19,9 @@
     },
     "dependencies": {
         "@az-commons": "file:../az-commons/bin",
-        "@pulumi/azure-native": "^2.64.0",
+        "@pulumi/azure-native": "^2.64.2",
         "@pulumi/azuread": "^5.53.5",
-        "@pulumi/pulumi": "^3.134.1",
+        "@pulumi/pulumi": "^3.135.0",
         "@pulumi/random": "^4.16.6"
     }
 }

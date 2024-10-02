@@ -12,14 +12,14 @@ importers:
         specifier: file:../az-commons/bin
         version: bin@file:../az-commons/bin
       '@pulumi/azure-native':
-        specifier: ^2.64.0
-        version: 2.64.0(typescript@5.6.2)
+        specifier: ^2.64.2
+        version: 2.64.2(typescript@5.6.2)
       '@pulumi/azuread':
         specifier: ^5.53.5
         version: 5.53.5(typescript@5.6.2)
       '@pulumi/pulumi':
-        specifier: ^3.134.1
-        version: 3.134.1(typescript@5.6.2)
+        specifier: ^3.135.0
+        version: 3.135.0(typescript@5.6.2)
       '@pulumi/random':
         specifier: ^4.16.6
         version: 4.16.6(typescript@5.6.2)
@@ -224,14 +224,14 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@pulumi/azure-native@2.64.0':
-    resolution: {integrity: sha512-wSsU9cULNyP82Uff31FCe85fxqKwVYGB/nWZTrhGs+37XWkIvtoFUwO4czizSgcGTkJoheGlWGJPKn+MsQxoAQ==}
+  '@pulumi/azure-native@2.64.2':
+    resolution: {integrity: sha512-KXsJCOY46907606ipBWQ8kXAtgWJBQWcfla6mCDA2+N+xLi5GcsnMUwiCa5hv5oP+xaKQ7XKJb/xaNzz/ulq7w==}
 
   '@pulumi/azuread@5.53.5':
     resolution: {integrity: sha512-Kc4KGRlNWTLryhR/flfDrc6tCj2qHveWLry6ES/5SwlqAPxbK++YSZ9ldXf1xnLWTeTiHeVy+4tBtWC/idUPmQ==}
 
-  '@pulumi/pulumi@3.134.1':
-    resolution: {integrity: sha512-uXUldyEsYbEXkqE3nPfgABnfgnXjQv3YkzkiigeOBzTF2+7rQe7C/9nMnMJHs4k5XMW5183t7bYMU/W4qUUVcA==}
+  '@pulumi/pulumi@3.135.0':
+    resolution: {integrity: sha512-RYsv44UECC8MHtTEGWS6olVFmI9ad8iEySm9xmgoOk8Au6Lulf4phf1HiXEV8+vR9+3Lmtt4pYYdKrRvf4TfhQ==}
     engines: {node: '>=18'}
     peerDependencies:
       ts-node: '>= 7.0.1 < 12'
@@ -1376,9 +1376,9 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@pulumi/azure-native@2.64.0(typescript@5.6.2)':
+  '@pulumi/azure-native@2.64.2(typescript@5.6.2)':
     dependencies:
-      '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
+      '@pulumi/pulumi': 3.135.0(typescript@5.6.2)
     transitivePeerDependencies:
       - bluebird
       - supports-color
@@ -1387,14 +1387,14 @@ snapshots:
 
   '@pulumi/azuread@5.53.5(typescript@5.6.2)':
     dependencies:
-      '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
+      '@pulumi/pulumi': 3.135.0(typescript@5.6.2)
     transitivePeerDependencies:
       - bluebird
       - supports-color
       - ts-node
       - typescript
 
-  '@pulumi/pulumi@3.134.1(typescript@5.6.2)':
+  '@pulumi/pulumi@3.135.0(typescript@5.6.2)':
     dependencies:
       '@grpc/grpc-js': 1.11.3
       '@logdna/tail-file': 2.2.0
@@ -1436,7 +1436,7 @@ snapshots:
 
   '@pulumi/random@4.16.6(typescript@5.6.2)':
     dependencies:
-      '@pulumi/pulumi': 3.134.1(typescript@5.6.2)
+      '@pulumi/pulumi': 3.135.0(typescript@5.6.2)
     transitivePeerDependencies:
       - bluebird
       - supports-color

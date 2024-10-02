@@ -1,5 +1,5 @@
-import * as pulumi from "@pulumi/pulumi";
-import * as azure from "@pulumi/azure-native";
+import * as azure from '@pulumi/azure-native';
+import * as pulumi from '@pulumi/pulumi';
 
 // Retrieve the current Azure client configuration
 const config = pulumi.output(azure.authorization.getClientConfig());
@@ -14,7 +14,16 @@ export const subscriptionId = config.apply((c) => c.subscriptionId);
 export const currentPrincipal = config.apply((c) => c.objectId);
 
 // Parse the Pulumi configuration from the environment variable
-const env = JSON.parse(process.env.PULUMI_CONFIG ?? "{}");
+const env = JSON.parse(process.env.PULUMI_CONFIG ?? '{}');
 
 // Export the current Azure region code, defaulting to "SoutheastAsia" if not set
-export const currentRegionCode = env["azure-native:config:location"]!;
+export const currentRegionCode = env['azure-native:config:location']!;
+
+//Print and Check
+pulumi.all([subscriptionId, tenantId]).apply(([s, t]) => {
+    console.log(`Azure Environment:`, {
+        tenantId: t,
+        subscriptionId: s,
+        currentRegionCode,
+    });
+});

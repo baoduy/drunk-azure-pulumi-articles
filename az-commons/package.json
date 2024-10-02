@@ -10,7 +10,7 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install --force"
+    "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +19,7 @@
     "typescript": "^5.6.2"
   },
   "dependencies": {
-    "@pulumi/azure-native": "^2.64.0",
-    "@pulumi/pulumi": "^3.134.1"
+    "@pulumi/azure-native": "^2.64.2",
+    "@pulumi/pulumi": "^3.135.0"
   }
 }
