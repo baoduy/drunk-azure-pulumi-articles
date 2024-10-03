@@ -15,6 +15,10 @@ steps:
   inputs:
     versionSpec: "20.x"
 
+  # build commons
+- script: npm install -g pnpm
+  displayName: "install pnpm"
+
 # build commons
 - script: |
     pnpm install
