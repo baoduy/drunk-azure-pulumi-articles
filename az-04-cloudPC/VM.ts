@@ -45,25 +45,6 @@ const generateLogin = (name: string, vault: VaultInfo) => {
     return { username, password };
 };
 
-const createVmEncryptSecret = (name: string, vault: VaultInfo) => {
-    const randomPass = new random.RandomPassword(`${name}-password`, {
-        length: 50,
-        special: true,
-        numeric: true,
-        lower: true,
-        upper: true,
-    });
-    return new azure.keyvault.Secret(
-        name,
-        {
-            ...vault,
-            secretName: name,
-            properties: { value: randomPass.result },
-        },
-        { dependsOn: randomPass }
-    );
-};
-
 /**
  * THis Vm will be a linux VM
  * - `username` and `password` will be generated using pulumi random and store in Key Vault.

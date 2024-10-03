@@ -1,0 +1,74 @@
+trigger:
+  branches:
+    include:
+    - releases/*
+    exclude:
+    - main
+    -
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: pulumi
+- name: azureSubscription
+  value: 'az-drunk'
+# identity the enc based on branch name ex: dev, sandbox and prd
+- name: env_name
+  value: $[replace(variables['Build.SourceBranchName'], 'refs/heads/releases', '')]
+
+stages:
+- stage: 'deploy_share'
+  displayName: '01. Shared Resources'
+  jobs:
+  - job: 
+    displayName: 'Preparing'
+    steps:
+      #print env name
+      - task: Bash@3
+        displayName: print env name
+        inputs:
+          targetType: 'inline'
+          script: 'echo "Env name is: $(env_name)"'
+
+# stage 1: az-01-shared
+- stage: 'deploy_shared'
+  displayName: 'Deploy az-01-shared'
+  jobs:
+  - template: build-and-deploy.yml
+    parameters:
+      workDir: 'az-01-shared'
+      stack: $(env_name)
+      azureSubscription: $(azureSubscription)
+
+# stage 2: az-02-hub-vnet
+- stage: 'deploy_hub'
+  dependsOn: 'deploy_shared'
+  displayName: 'Deploy az-02-hub-vnet'
+  jobs:
+    - template: build-and-deploy.yml
+      parameters:
+        workDir: 'az-02-hub-vnet'
+        stack: $(env_name)
+        azureSubscription: $(azureSubscription)
+
+# stage 3: az-03-aks-cluster
+- stage: 'deploy_aks'
+  dependsOn: 'deploy_hub'
+  displayName: 'Deploy az-03-aks-cluster'
+  jobs:
+    - template: build-and-deploy.yml
+      parameters:
+        workDir: 'az-03-aks-cluster'
+        stack: $(env_name)
+        azureSubscription: $(azureSubscription)
+
+# stage 4: az-04-cloudPC
+- stage: 'deploy_cloudpc'
+  dependsOn: 'deploy_hub'
+  displayName: 'Deploy az-04-cloudPC'
+  jobs:
+    - template: build-and-deploy.yml
+      parameters:
+        workDir: 'az-04-cloudPC'
+        stack: $(env_name)
+        azureSubscription: $(azureSubscription)

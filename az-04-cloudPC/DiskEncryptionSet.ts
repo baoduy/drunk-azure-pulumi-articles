@@ -26,7 +26,8 @@ const createUserAssignIdentity = (
         getName(name, 'uid'),
         {
             resourceGroupName: rsGroup.name,
-        }
+        },
+        { dependsOn: rsGroup }
     );
 
     //Add identity to readOnly group of Vault to allows to read encryption Key
@@ -95,11 +96,10 @@ export default (
 ) => {
     const diskName = getName(name, 'disk-encrypt');
     const uid = createUserAssignIdentity(diskName, { rsGroup, vault });
-
-    //Create Key on key vault
+    //Create Key on vault
     const key = createEncryptionKey(diskName, vault);
 
-    const diskEncrypt = new azure.compute.DiskEncryptionSet(
+    return new azure.compute.DiskEncryptionSet(
         diskName,
         {
             resourceGroupName: rsGroup.name,
@@ -116,6 +116,4 @@ export default (
             dependsOn: [rsGroup, key, uid],
         }
     );
-
-    return diskEncrypt;
 };

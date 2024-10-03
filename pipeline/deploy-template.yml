@@ -7,6 +7,13 @@ parameters:
   type: string
 
 steps:
+#ensure the pulumi cli is installed
+- task: Bash@3
+  displayName: install latest pulumi
+  inputs:
+    targetType: 'inline'
+    script: 'curl -fsSL https://get.pulumi.com | sh'
+
 #Pulumi Refresh
 - task: Pulumi@1
   displayName: "pulumi refresh"
@@ -28,7 +35,7 @@ steps:
   continueOnError: true
   env:
     PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
-    NODE_OPTIONS: '--max-old-space-size=8192'
+    #NODE_OPTIONS: '--max-old-space-size=8192'
   inputs:
     azureSubscription: ${{ parameters.azureSubscription }}
     command: "up"
@@ -42,7 +49,7 @@ steps:
   continueOnError: false
   env:
     PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
-    NODE_OPTIONS: '--max-old-space-size=8192'
+    #NODE_OPTIONS: '--max-old-space-size=8192'
   inputs:
     azureSubscription: ${{ parameters.azureSubscription }}
     command: "up"
