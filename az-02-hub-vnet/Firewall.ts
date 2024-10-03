@@ -110,5 +110,6 @@ export default (
         );
     }
 
+    //Return Firewall info out
     return { firewall, publicIP };
 };

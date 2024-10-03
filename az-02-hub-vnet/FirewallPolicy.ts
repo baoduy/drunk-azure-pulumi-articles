@@ -20,5 +20,5 @@ export default (
             sku: { tier },
             snat: { autoLearnPrivateRanges: 'Enabled' },
         },
-        { dependsOn: rsGroup } // Ensure the policy depends on the resource group
+        { dependsOn: rsGroup }
     );
