@@ -11,12 +11,10 @@ import VNet from './VNet';
 const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
-hubVnetStack.apply((h) => console.log(h));
-
 //Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
 FirewallRule(config.azGroups.aks, {
-    rsGroupName: hubVnetStack.rsGroup.name,
-    policyName: hubVnetStack.firewallPolicy.name,
+    resourceGroupName: hubVnetStack.rsGroup.name,
+    name: hubVnetStack.firewallPolicy.name,
 });
 
 // Create Vnet
