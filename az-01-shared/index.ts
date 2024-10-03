@@ -1,7 +1,6 @@
 import { getGroupName } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as config from '../config';
-import Automation from './Automation';
 import Log from './Log';
 import Vault from './Vault';
 
@@ -17,14 +16,11 @@ const vaultInfo = Vault(config.azGroups.shared, {
     retentionInDays: 7,
 });
 
-//The centralize log workspace and appInsight
+//The centralized log workspace and appInsight
 const logInfo = Log(config.azGroups.shared, {
     rsGroup,
     vault: vaultInfo.vault,
 });
-
-//The automation account that will be used for VM and AKS on/off automation.
-const auto = Automation(config.azGroups.shared, rsGroup);
 
 // Export the information that will be used in the other projects
 export default {
@@ -45,5 +41,4 @@ export default {
         readOnlyGroupId: vaultInfo.vaultReadOnlyGroup.id,
         writeGroupId: vaultInfo.vaultWriteGroup.id,
     },
-    automation: { name: auto.name, id: auto.id },
 };

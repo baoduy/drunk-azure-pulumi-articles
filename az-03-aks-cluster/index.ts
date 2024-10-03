@@ -1,4 +1,5 @@
 import { getGroupName, getName, StackReference } from '@az-commons';
+import * as azure from '@pulumi/azure-native';
 import * as resources from '@pulumi/azure-native/resources';
 import * as config from '../config';
 import Aks from './Aks';
