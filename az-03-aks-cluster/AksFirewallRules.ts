@@ -1,4 +1,5 @@
 import { currentRegionCode, getName } from '@az-commons';
+import * as azure from '@pulumi/azure-native';
 import * as network from '@pulumi/azure-native/network';
 import * as inputs from '@pulumi/azure-native/types/input';
 import * as pulumi from '@pulumi/pulumi';
@@ -13,10 +14,8 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
         ipProtocols: ['TCP'],
         sourceAddresses: [subnetSpaces.aks],
         destinationAddresses: [
-            'AzureContainerRegistry',
             'MicrosoftContainerRegistry',
             'AzureMonitor',
-            'AppConfiguration',
             'AzureKeyVault',
         ],
         destinationPorts: ['443'],
@@ -47,36 +46,59 @@ const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [
 
 export default (
     name: string,
-    //This FirewallPolicyRuleCollectionGroup need to be linked to the Root Policy that had been created in `az-02-hub-vnet`
-    rootPolicy: {
-        name: pulumi.Input<string>;
-        resourceGroupName: pulumi.Input<string>;
+    {
+        acr,
+        rootPolicy,
+    }: {
+        acr: azure.containerregistry.Registry;
+        //This FirewallPolicyRuleCollectionGroup need to be linked to the Root Policy that had been created in `az-02-hub-vnet`
+        rootPolicy: {
+            name: pulumi.Input<string>;
+            resourceGroupName: pulumi.Input<string>;
+        };
     }
 ) =>
-    new network.FirewallPolicyRuleCollectionGroup(getName(name, 'fw-group'), {
-        resourceGroupName: rootPolicy.resourceGroupName,
-        firewallPolicyName: rootPolicy.name,
-        priority: 300,
-        ruleCollections: [
-            {
-                name: 'net-rules-collection',
-                priority: 300,
-                ruleCollectionType: 'FirewallPolicyFilterRuleCollection',
-                action: {
-                    type: network.FirewallPolicyFilterRuleCollectionActionType
-                        .Allow,
+    new network.FirewallPolicyRuleCollectionGroup(
+        getName(name, 'fw-group'),
+        {
+            resourceGroupName: rootPolicy.resourceGroupName,
+            firewallPolicyName: rootPolicy.name,
+            priority: 300,
+            ruleCollections: [
+                {
+                    name: 'net-rules-collection',
+                    priority: 300,
+                    ruleCollectionType: 'FirewallPolicyFilterRuleCollection',
+                    action: {
+                        type: network
+                            .FirewallPolicyFilterRuleCollectionActionType.Allow,
+                    },
+                    rules: netRules,
                 },
-                rules: netRules,
-            },
-            {
-                name: 'app-rules-collection',
-                priority: 301,
-                ruleCollectionType: 'FirewallPolicyFilterRuleCollection',
-                action: {
-                    type: network.FirewallPolicyFilterRuleCollectionActionType
-                        .Allow,
+                {
+                    name: 'app-rules-collection',
+                    priority: 301,
+                    ruleCollectionType: 'FirewallPolicyFilterRuleCollection',
+                    action: {
+                        type: network
+                            .FirewallPolicyFilterRuleCollectionActionType.Allow,
+                    },
+                    rules: [
+                        ...appRules,
+                        {
+                            ruleType: 'ApplicationRule',
+                            name: 'aks-allows-pull-arc',
+                            description:
+                                'Only allows AKS to pull image from private ACR',
+                            sourceAddresses: [subnetSpaces.aks],
+                            targetFqdns: [
+                                pulumi.interpolate`${acr.name}.azurecr.io`,
+                            ],
+                            protocols: [{ protocolType: 'Https', port: 443 }],
+                        },
+                    ],
                 },
-                rules: appRules,
-            },
-        ],
-    });
+            ],
+        },
+        { dependsOn: acr }
+    );

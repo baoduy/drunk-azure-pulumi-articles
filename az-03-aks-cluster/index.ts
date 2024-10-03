@@ -11,14 +11,20 @@ import VNet from './VNet';
 const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
-//Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
-FirewallRule(config.azGroups.aks, {
-    resourceGroupName: hubVnetStack.rsGroup.name,
-    name: hubVnetStack.firewallPolicy.name,
-});
-
 // Create Vnet
 const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks));
+
+//Create Private Container Registry to AKS
+const acr = ContainerRegistry(config.azGroups.aks, { rsGroup });
+
+//Apply AKS Firewall Rules this will be a new AKS Firewall Group links to the Hub Firewall Policy created in `az-02-hub`
+FirewallRule(config.azGroups.aks, {
+    acr,
+    rootPolicy: {
+        resourceGroupName: hubVnetStack.rsGroup.name,
+        name: hubVnetStack.firewallPolicy.name,
+    },
+});
 
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.aks, {
@@ -62,9 +68,6 @@ const vnet = VNet(config.azGroups.aks, {
         resourceGroupName: hubVnetStack.rsGroup.name,
     },
 });
-
-//Create Private Container Registry to AKS
-const acr = ContainerRegistry(config.azGroups.aks, { rsGroup });
 
 //Create AKS cluster
 const aks = Aks(config.azGroups.aks, {
