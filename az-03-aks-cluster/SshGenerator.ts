@@ -2,6 +2,7 @@ import { generateKeyPair, RSAKeyPairOptions } from 'crypto';
 import * as pulumi from '@pulumi/pulumi';
 import * as forge from 'node-forge';
 
+/** A core method to generate the Ssh keys using node-force */
 const generateKeys = (options: RSAKeyPairOptions<'pem', 'pem'>) =>
     new Promise<{ publicKey: string; privateKey: string }>(
         (resolve, reject) => {
@@ -28,8 +29,8 @@ const generateKeys = (options: RSAKeyPairOptions<'pem', 'pem'>) =>
     );
 
 /**
- * By default Pulumi is not support Ssh generator.
- * This class was implemented using a amazing feature of pulumi called `Dynamic Provider`.
+ * There is no native Pulumi component to Ssh generator.
+ * This class was implemented using an amazing feature of pulumi called `Dynamic Resource Provider`.
  * Refer here for detail: https://www.pulumi.com/docs/iac/concepts/resources/dynamic-providers/
  * */
 export type DeepInput<T> = T extends object
@@ -46,9 +47,12 @@ interface SshKeyOutputs {
     publicKey: string;
 }
 
+/** Ssh Resource Provider*/
 class SshResourceProvider implements pulumi.dynamic.ResourceProvider {
     constructor(private name: string) {}
 
+    /**Method will be executed when pulumi resource creating.
+     * In here we just generate ssh with provided password and return the results as output of component*/
     async create(
         inputs: SshKeyInputs
     ): Promise<pulumi.dynamic.CreateResult<SshKeyOutputs>> {
@@ -76,6 +80,8 @@ class SshResourceProvider implements pulumi.dynamic.ResourceProvider {
         };
     }
 
+    /** The method will be executed when pulumi resource is updating.
+     * We do nothing here but just return the output that was created before*/
     async update(
         id: string,
         old: SshKeyOutputs,
@@ -86,6 +92,7 @@ class SshResourceProvider implements pulumi.dynamic.ResourceProvider {
     }
 }
 
+/** The Ssh Generator Resource will use the provider above to generate and store the output into the pulumi project state. */
 export class SshGenerator extends pulumi.dynamic.Resource {
     declare readonly name: string;
     declare readonly publicKey: pulumi.Output<string>;
@@ -98,12 +105,14 @@ export class SshGenerator extends pulumi.dynamic.Resource {
         opts?: pulumi.CustomResourceOptions
     ) {
         const innerOpts = pulumi.mergeOptions(opts, {
+            //This is important to tell pulumi to encrypt these outputs in the state. The encrypting and decrypting will be handled bt pulumi automatically
             additionalSecretOutputs: ['publicKey', 'privateKey', 'password'],
         });
 
         const innerInputs = {
             publicKey: undefined,
             privateKey: undefined,
+            //This to tell pulumi that this input is a secret, and it will be encrypted in the state as well.
             password: pulumi.secret(args.password),
         };
 
@@ -116,4 +125,5 @@ export class SshGenerator extends pulumi.dynamic.Resource {
     }
 }
 
+//Export the SshGenerator resource as default of the module
 export default SshGenerator;

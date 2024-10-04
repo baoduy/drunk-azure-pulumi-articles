@@ -33,7 +33,11 @@ const createRBACIdentity = (name: string) => {
     return { adminGroup, appRegistration, appSecret };
 };
 
-/** AKS is required SSH key for Nodes access purposes.*/
+/** The method will:
+ * - Generate a random password using @pulumi/random
+ * - Using the random password to generate an Ssh public key and private key.
+ * - Store password, ssh public key and private key into Vault.
+ * */
 const createSsh = (
     name: string,
     {
@@ -45,12 +49,11 @@ const createSsh = (
         };
     }
 ) => {
-    //Create ssh
     const sshName = getName(name, 'ssh');
     const ssh = new SshGenerator(sshName, {
         password: new random.RandomPassword(name, { length: 50 }).result,
     });
-    //Store public key and private key to Vault
+    //Store a public key and private key to Vault
     if (vaultInfo) {
         [
             { name: `${sshName}-publicKey`, value: ssh.publicKey },
