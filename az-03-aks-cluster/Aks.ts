@@ -40,13 +40,9 @@ const createRBACIdentity = (name: string) => {
  * */
 const createSsh = (
     name: string,
-    {
-        vaultInfo,
-    }: {
-        vaultInfo?: {
-            resourceGroupName: pulumi.Input<string>;
-            vaultName: pulumi.Input<string>;
-        };
+    vaultInfo?: {
+        resourceGroupName: pulumi.Input<string>;
+        vaultName: pulumi.Input<string>;
     }
 ) => {
     const sshName = getName(name, 'ssh');
@@ -115,7 +111,7 @@ export default (
     }
 ) => {
     const aksIdentity = createRBACIdentity(name);
-    const ssh = createSsh(name, { vaultInfo });
+    const ssh = createSsh(name, vaultInfo);
 
     const aksName = getName(name, 'cluster');
     const nodeResourceGroup = `${aksName}-nodes`;
