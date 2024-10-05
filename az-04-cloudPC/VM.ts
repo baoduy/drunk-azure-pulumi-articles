@@ -157,6 +157,7 @@ export default (
                             azure.compute.StorageAccountTypes.StandardSSD_LRS,
                     },
                 },
+                //Sample to create data disk if needed
                 // dataDisks: [
                 //     {
                 //         diskSizeGB: 256,
