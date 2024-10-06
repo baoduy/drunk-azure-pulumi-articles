@@ -20,9 +20,9 @@ steps:
 
 # setup pnpm
 - script: |
-    corepack enable
+    #corepack enable
     corepack prepare pnpm@latest-9 --activate
-    pnpm config set store-dir $(pnpm_config_cache)
+    pnpm config set store-dir ${{ parameters.pnpm_config_cache }}
   displayName: "Setup pnpm"
 
   # build commons
