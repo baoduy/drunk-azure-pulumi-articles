@@ -114,6 +114,7 @@ export default (
         },
         {
             dependsOn: [rsGroup, key, uid],
+            retainOnDelete: true,
         }
     );
 };
