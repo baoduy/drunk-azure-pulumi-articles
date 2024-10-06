@@ -25,7 +25,7 @@ steps:
 # build commons
 - script: |
     pnpm install
-    Pnpm run build
+    pnpm run build
   displayName: "build az-commons"
   workingDirectory: az-commons
 
