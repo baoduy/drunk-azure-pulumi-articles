@@ -22,10 +22,6 @@ steps:
     pnpm config set store-dir $(pnpm_config_cache)
   displayName: "Setup pnpm"
 
-  # build commons
-- script: npm install -g pnpm
-  displayName: "install pnpm"
-
 # build commons
 - script: |
     pnpm install
