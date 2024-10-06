@@ -214,7 +214,13 @@ export default (
                             PATToken: azureDevOps.PATToken,
                         },
                     },
-                    { dependsOn: vm }
+                    {
+                        dependsOn: vm,
+                        //Extension is not allowed to be deleted when VM running.
+                        //Just leave the extension is there in the VM when deleting stack.
+                        //And it will be deleted when VM is deleting.
+                        retainOnDelete: true,
+                    }
                 )
         );
     }
