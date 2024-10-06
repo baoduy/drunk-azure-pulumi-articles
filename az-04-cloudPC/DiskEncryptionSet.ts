@@ -30,7 +30,7 @@ const createUserAssignIdentity = (
         { dependsOn: rsGroup }
     );
 
-    //Add identity to readOnly group of Vault to allows to read encryption Key
+    //Add identity to readOnly group of Vault to allow reading encryption Key
     new ad.GroupMember(
         getName(name, 'uid-vault-read'),
         {

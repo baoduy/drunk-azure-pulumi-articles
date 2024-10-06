@@ -24,9 +24,7 @@ const createRBACIdentity = (name: string) => {
     //Create App Client Secret
     const appSecret = new ad.ApplicationPassword(
         name,
-        {
-            applicationId: appRegistration.id,
-        },
+        { applicationId: appRegistration.id },
         { dependsOn: appRegistration }
     );
 
@@ -122,7 +120,7 @@ export default (
         aksName,
         {
             resourceGroupName: rsGroup.name,
-            //The name of node resource group. 
+            //The name of node resource group.
             //This group will be created and managed by AKS directly.
             nodeResourceGroup,
             dnsPrefix: aksName,
@@ -156,7 +154,7 @@ export default (
             },
             supportPlan:
                 azure.containerservice.KubernetesSupportPlan.KubernetesOfficial,
-            
+
             //The node pool profile: this will setup the subnetId, auto scale and disk space setup
             agentPoolProfiles: [
                 {
