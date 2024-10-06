@@ -3,6 +3,9 @@ parameters:
   type: string
 - name: workDir
   type: string
+- name: pnpm_config_cache
+  type: string
+  default: $[format('{0}/.pnpm-store', variables['Pipeline.Workspace'])]
 
 steps:
 - checkout: self
@@ -14,6 +17,13 @@ steps:
   displayName: "install node"
   inputs:
     versionSpec: "20.x"
+
+# setup pnpm
+- script: |
+    corepack enable
+    corepack prepare pnpm@latest-9 --activate
+    pnpm config set store-dir $(pnpm_config_cache)
+  displayName: "Setup pnpm"
 
   # build commons
 - script: npm install -g pnpm
