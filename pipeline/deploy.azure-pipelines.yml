@@ -12,24 +12,13 @@ variables:
 - group: pulumi
 - name: azureSubscription
   value: 'az-pulumi'
+- name: pnpm_config_cache
+  value: $(Pipeline.Workspace)/.pnpm-store
 # identity the enc based on branch name ex: dev, sandbox and prd
 - name: env_name
   value: $[replace(variables['Build.SourceBranchName'], 'refs/heads/releases', '')]
 
 stages:
-- stage: 'deploy_share'
-  displayName: '01. Shared Resources'
-  jobs:
-  - job:
-    displayName: 'Preparing'
-    steps:
-    #print env name
-    - task: Bash@3
-      displayName: print env name
-      inputs:
-        targetType: 'inline'
-        script: 'echo "Env name is: $(env_name)"'
-
 # stage 1: az-01-shared
 - stage: 'deploy_shared'
   displayName: 'Deploy az-01-shared'
