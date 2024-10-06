@@ -35,7 +35,7 @@ steps:
   continueOnError: true
   env:
     PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
-    #NODE_OPTIONS: '--max-old-space-size=8192'
+    NODE_OPTIONS: '--max-old-space-size=8192'
   inputs:
     azureSubscription: ${{ parameters.azureSubscription }}
     command: "up"
@@ -49,7 +49,7 @@ steps:
   continueOnError: false
   env:
     PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
-    #NODE_OPTIONS: '--max-old-space-size=8192'
+    NODE_OPTIONS: '--max-old-space-size=8192'
   inputs:
     azureSubscription: ${{ parameters.azureSubscription }}
     command: "up"

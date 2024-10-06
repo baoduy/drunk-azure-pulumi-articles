@@ -1,0 +1,29 @@
+parameters:
+- name: stack
+  type: string
+- name: workDir
+  type: string
+- name: azureSubscription
+  type: string
+
+jobs:
+- job: "build_and_deploy"
+  displayName: Build & Deploy
+  steps:
+  - template: build-template.yml
+    parameters:
+      stack: ${{ parameters.stack }}
+      workDir: ${{ parameters.workDir }}
+
+  - task: Pulumi@1
+    displayName: "pulumi destroy"
+    continueOnError: false
+    env:
+      PULUMI_ACCESS_TOKEN: $(PULUMI_ACCESS_TOKEN)
+      NODE_OPTIONS: '--max-old-space-size=8192'
+    inputs:
+      azureSubscription: ${{ parameters.azureSubscription }}
+      command: "destroy"
+      cwd: ${{ parameters.workDir }}
+      stack: ${{ parameters.stack }}
+      args: "--yes --skip-preview"

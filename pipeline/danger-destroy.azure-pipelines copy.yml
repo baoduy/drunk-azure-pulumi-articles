@@ -1,0 +1,62 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: pulumi
+- name: azureSubscription
+  value: 'az-pulumi'
+- name: pnpm_config_cache
+  value: $(Pipeline.Workspace)/.pnpm-store
+- name: env_name
+  value: $[replace(variables['Build.SourceBranchName'], 'refs/heads/releases', '')]
+
+stages:
+# stage 1: az-04-cloudPC
+- stage: 'destroy_cloudpc'
+  displayName: 'Destroy az-04-cloudPC'
+  jobs:
+  - template: danger-build-and-destroy.yml
+    parameters:
+      workDir: 'az-04-cloudPC'
+      stack: $(env_name)
+      azureSubscription: $(azureSubscription)
+
+# stage 2: az-03-aks-cluster
+- stage: 'destroy_aks_cluster'
+  dependsOn: 'destroy_cloudpc'
+  displayName: 'Destroy az-03-aks-cluster'
+  jobs:
+  - template: danger-build-and-destroy.yml
+    parameters:
+      workDir: 'az-03-aks-cluster'
+      stack: $(env_name)
+      azureSubscription: $(azureSubscription)
+
+# stage 3: az-02-hub-vnet
+- stage: 'destroy_hub_vnet'
+  dependsOn: 'destroy_aks_cluster'
+  displayName: 'Destroy az-02-hub-vnet'
+  jobs:
+  - template: danger-build-and-destroy.yml
+    parameters:
+      workDir: 'az-02-hub-vnet'
+      stack: $(env_name)
+      azureSubscription: $(azureSubscription)
+
+# stage 4: az-01-shared
+- stage: 'destroy__shared'
+  dependsOn: 'destroy_hub_vnet'
+  displayName: 'Destroy az-01-shared'
+  jobs:
+  - template: danger-build-and-destroy.yml
+    parameters:
+      workDir: 'az-01-shared'
+      stack: $(env_name)
+      azureSubscription: $(azureSubscription)
+
+
+
+
