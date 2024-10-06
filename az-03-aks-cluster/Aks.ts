@@ -10,7 +10,7 @@ import SshGenerator from './SshGenerator';
  * */
 const createRBACIdentity = (name: string) => {
     name = getName(name, 'Admin');
-    //Create Entra Group
+    //Create Entra Admin Group
     const adminGroup = new ad.Group(name, {
         displayName: `AZ ROL ${name.toUpperCase()}`,
         securityEnabled: true,
@@ -30,27 +30,27 @@ const createRBACIdentity = (name: string) => {
         { dependsOn: appRegistration }
     );
 
+    //Return the results
     return { adminGroup, appRegistration, appSecret };
 };
 
-/** AKS is required SSH key for Nodes access purposes.*/
+/** The method will:
+ * - Generate a random password using @pulumi/random
+ * - Using the random password to generate an Ssh public key and private key.
+ * - Store password, ssh public key and private key into Vault.
+ * */
 const createSsh = (
     name: string,
-    {
-        vaultInfo,
-    }: {
-        vaultInfo?: {
-            resourceGroupName: pulumi.Input<string>;
-            vaultName: pulumi.Input<string>;
-        };
+    vaultInfo?: {
+        resourceGroupName: pulumi.Input<string>;
+        vaultName: pulumi.Input<string>;
     }
 ) => {
-    //Create ssh
     const sshName = getName(name, 'ssh');
     const ssh = new SshGenerator(sshName, {
         password: new random.RandomPassword(name, { length: 50 }).result,
     });
-    //Store public key and private key to Vault
+    //Store a public key and private key to Vault
     if (vaultInfo) {
         [
             { name: `${sshName}-publicKey`, value: ssh.publicKey },
@@ -112,7 +112,7 @@ export default (
     }
 ) => {
     const aksIdentity = createRBACIdentity(name);
-    const ssh = createSsh(name, { vaultInfo });
+    const ssh = createSsh(name, vaultInfo);
 
     const aksName = getName(name, 'cluster');
     const nodeResourceGroup = `${aksName}-nodes`;
@@ -122,14 +122,20 @@ export default (
         aksName,
         {
             resourceGroupName: rsGroup.name,
+            //The name of node resource group. 
+            //This group will be created and managed by AKS directly.
             nodeResourceGroup,
             dnsPrefix: aksName,
+
+            //The server provide: disable run command, and enable private cluster.
             apiServerAccessProfile: {
                 disableRunCommand: true,
                 enablePrivateCluster: true,
                 enablePrivateClusterPublicFQDN: true,
                 privateDNSZone: 'system',
             },
+
+            //Addon profile to enable and disable some built in features
             addonProfiles: {
                 azureKeyvaultSecretsProvider: { enabled: false },
                 azurePolicy: { enabled: true },
@@ -150,6 +156,8 @@ export default (
             },
             supportPlan:
                 azure.containerservice.KubernetesSupportPlan.KubernetesOfficial,
+            
+            //The node pool profile: this will setup the subnetId, auto scale and disk space setup
             agentPoolProfiles: [
                 {
                     name: 'defaultnodes',
@@ -178,10 +186,12 @@ export default (
                     osType: 'Linux',
                 },
             ],
+            //Linux authentication profile username and ssh key
             linuxProfile: {
                 adminUsername: nodeAdminUserName,
                 ssh: { publicKeys: [{ keyData: ssh.publicKey }] },
             },
+            //service profile to setup EntraID identity.
             servicePrincipalProfile: {
                 clientId: aksIdentity.appRegistration.clientId,
                 secret: aksIdentity.appSecret.value,
@@ -190,9 +200,11 @@ export default (
                 type: azure.containerservice.ResourceIdentityType
                     .SystemAssigned,
             },
+            //Enable auto upgrade
             autoUpgradeProfile: {
                 upgradeChannel: azure.containerservice.UpgradeChannel.Stable,
             },
+            //disable local account and only allows to authenticate using EntraID
             disableLocalAccounts: true,
             enableRBAC: true,
             aadProfile: {
@@ -201,6 +213,7 @@ export default (
                 adminGroupObjectIDs: [aksIdentity.adminGroup.objectId],
                 tenantID: tenantId,
             },
+            //Storage profile
             //TODO: update this one depend on your env needs
             storageProfile: {
                 blobCSIDriver: { enabled: true },
@@ -208,6 +221,8 @@ export default (
                 fileCSIDriver: { enabled: true },
                 snapshotController: { enabled: false },
             },
+            //Network profile, it is using Azure network with User define routing
+            //This will use vnet route table to route all access to hub vnet
             networkProfile: {
                 networkMode: azure.containerservice.NetworkMode.Transparent,
                 networkPolicy: azure.containerservice.NetworkPolicy.Azure,
@@ -228,7 +243,7 @@ export default (
         }
     );
 
-    //If ACR is provided then grant permission to allows AKS to download image from ACR
+    //If ACR is provided, then grant permission to allow AKS to download image from ACR
     if (acr) {
         new azure.authorization.RoleAssignment(
             `${aksName}-arc-pull`,

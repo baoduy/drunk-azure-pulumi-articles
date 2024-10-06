@@ -7,12 +7,10 @@ import devOpsRules from './devopsPolicyGroup';
 
 export default (
     name: string,
-    {
-        rsGroupName,
-        policyName,
-    }: {
-        policyName: pulumi.Input<string>;
-        rsGroupName: pulumi.Input<string>;
+    //This FirewallPolicyRuleCollectionGroup need to be linked to the Root Policy that had been created in `az-02-hub-vnet`
+    rootPolicy: {
+        name: pulumi.Input<string>;
+        resourceGroupName: pulumi.Input<string>;
     }
 ) => {
     const netRules = [...cloudPCRules.netRules, ...devOpsRules.netRules];
@@ -48,8 +46,8 @@ export default (
     return new network.FirewallPolicyRuleCollectionGroup(
         getName(name, 'fw-group'),
         {
-            resourceGroupName: rsGroupName,
-            firewallPolicyName: policyName,
+            resourceGroupName: rootPolicy.resourceGroupName,
+            firewallPolicyName: rootPolicy.name,
             priority: 301,
             ruleCollections,
         }

@@ -12,15 +12,6 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
         destinationAddresses: ['*'],
         destinationPorts: ['443', '80'],
     },
-    // {
-    //     ruleType: 'NetworkRule',
-    //     name: 'devops-to-ubuntu',
-    //     description: 'Allows devops to ubuntu.',
-    //     ipProtocols: ['TCP', 'UDP'],
-    //     sourceAddresses: [subnetSpaces.devOps],
-    //     destinationAddresses: ['*'],
-    //     destinationPorts: ['443', '80'],
-    // },
 ];
 
 const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [];

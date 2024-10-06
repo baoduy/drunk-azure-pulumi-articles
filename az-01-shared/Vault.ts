@@ -26,7 +26,7 @@ export default (
                 softDeleteRetentionInDays: retentionInDays,
                 //Must be authenticated with EntraID for accessing.
                 enableRbacAuthorization: true,
-                enabledForDeployment: true,
+                //enabledForDeployment: true,
                 tenantId,
                 sku: {
                     name: azure.keyvault.SkuName.Standard,

@@ -13,11 +13,11 @@ const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
 //Apply Firewall Rules
 FirewallRule(config.azGroups.cloudPC, {
-    rsGroupName: hubVnetStack.rsGroup.name,
-    policyName: hubVnetStack.firewallPolicy.name,
+    resourceGroupName: hubVnetStack.rsGroup.name,
+    name: hubVnetStack.firewallPolicy.name,
 });
 
-//The vault Info from shared project
+//The vault Info from the shared project
 const vault = {
     id: sharedStack.vault.id,
     vaultName: sharedStack.vault.name,
