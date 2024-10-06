@@ -9,7 +9,7 @@
     "name": "@az-common"
   },
   "scripts": {
-    "build": "npx tsc",
+    "build": "NODE_OPTIONS=\"--max-old-space-size=8192\" npx tsc",
     "update": "npx npm-check-updates -u --configFilePath ../.ncurc.json && pnpm install"
   },
   "keywords": [],
