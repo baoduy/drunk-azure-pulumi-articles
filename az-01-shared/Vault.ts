@@ -1,4 +1,4 @@
-import { getName, tenantId } from '@az-commons';
+import { currentPrincipal, getName, tenantId } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 
@@ -37,7 +37,7 @@ export default (
         { dependsOn: rsGroup }
     );
 
-    /** As the key vault is require Rbac authentication.
+    /** As the key vault is requiring Rbac authentication.
      * So We will create 2 EntraID groups for ReadOnly and Write access to this Key Vault
      */
     const vaultReadOnlyGroup = new ad.Group(`${vaultName}-readOnly`, {
@@ -47,6 +47,8 @@ export default (
     const vaultWriteGroup = new ad.Group(`${vaultName}-write`, {
         displayName: `AZ ROL ${vaultName.toUpperCase()} WRITE`,
         securityEnabled: true,
+        //Add current member in to ensure the AzureDevOps principal has WRITE permission to Vault
+        members: [currentPrincipal],
     });
 
     /**
@@ -83,7 +85,7 @@ export default (
         },
     ].map(
         (r) =>
-            //Grant the resources roles to the group above.
+            //Grant the resource roles to the group above.
             new azure.authorization.RoleAssignment(
                 `${vaultName}-${r.id}`,
                 {
@@ -117,7 +119,7 @@ export default (
         },
     ].map(
         (r) =>
-            //Grant the resources roles to the group above.
+            //Grant the resource roles to the group above.
             new azure.authorization.RoleAssignment(
                 `${vaultName}-${r.id}`,
                 {
