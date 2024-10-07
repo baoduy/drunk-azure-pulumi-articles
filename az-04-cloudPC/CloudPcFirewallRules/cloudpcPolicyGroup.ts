@@ -53,7 +53,7 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
     },
     {
         ruleType: 'NetworkRule',
-        name: `${name}-net-allow-win365-udp-tcp`,
+        name: `cloudPC-net-allow-win365-udp-tcp`,
         description: 'CloudPc allows Windows 365 udp tcp',
         ipProtocols: ['UDP', 'TCP'],
         sourceAddresses: [subnetSpaces.cloudPC],
