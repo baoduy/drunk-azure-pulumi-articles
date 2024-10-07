@@ -19,6 +19,8 @@ export default (
         {
             privateZoneName: name,
             resourceGroupName: rsGroup.name,
+            //The location here must be 'global'
+            location: 'global',
         },
         { dependsOn: rsGroup }
     );
@@ -57,7 +59,8 @@ export default (
                 {
                     privateZoneName: zone.name,
                     resourceGroupName: rsGroup.name,
-                    location: rsGroup.location,
+                    //The location here must be 'global'
+                    location: 'global',
                     registrationEnabled: false,
                     virtualNetwork: { id: v },
                 },
