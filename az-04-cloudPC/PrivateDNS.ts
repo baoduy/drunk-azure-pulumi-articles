@@ -19,8 +19,6 @@ export default (
         {
             privateZoneName: name,
             resourceGroupName: rsGroup.name,
-            //All the DNS zone location must be "global"
-            location: 'global',
         },
         { dependsOn: rsGroup }
     );
@@ -59,6 +57,7 @@ export default (
                 {
                     privateZoneName: zone.name,
                     resourceGroupName: rsGroup.name,
+                    location: rsGroup.location,
                     registrationEnabled: false,
                     virtualNetwork: { id: v },
                 },
