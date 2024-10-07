@@ -43,10 +43,14 @@ export default (
     const vaultReadOnlyGroup = new ad.Group(`${vaultName}-readOnly`, {
         displayName: `AZ ROL ${vaultName.toUpperCase()} READONLY`,
         securityEnabled: true,
+        //add current principal as an owner.
+        owners: [currentPrincipal],
     });
     const vaultWriteGroup = new ad.Group(`${vaultName}-write`, {
         displayName: `AZ ROL ${vaultName.toUpperCase()} WRITE`,
         securityEnabled: true,
+        //add current principal as an owner.
+        owners: [currentPrincipal],
         //Add current member in to ensure the AzureDevOps principal has WRITE permission to Vault
         members: [currentPrincipal],
     });
