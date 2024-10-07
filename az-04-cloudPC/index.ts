@@ -4,6 +4,7 @@ import * as pulumi from '@pulumi/pulumi';
 import * as config from '../config';
 import FirewallRule from './CloudPcFirewallRules';
 import DiskEncryptionSet from './DiskEncryptionSet';
+import PrivateDNS from './PrivateDNS';
 import VM from './VM';
 import VNet from './VNet';
 
@@ -98,9 +99,17 @@ const vm = VM('devops-agent-01', {
     },
 });
 
+//Create Private DNS Zone
+const zone = PrivateDNS('drunkcoding.net', {
+    rsGroup,
+    privateIpAddress: '192.168.31.250',
+    vnetIds: [vnet.id, hubVnetStack.hubVnet.id],
+});
+
 // Export the information that will be used in the other projects
 export default {
     rsGroup: { name: rsGroup.name, id: rsGroup.id },
     cloudPcVnet: { name: vnet.name, id: vnet.id },
     devopsAgent01: { name: vm.name, id: vm.id },
+    privateDNS: { name: zone.name, id: zone.id },
 };
