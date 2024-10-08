@@ -1,4 +1,4 @@
-import { getName, tenantId } from '@az-commons';
+import { currentPrincipal, getName, tenantId } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 import * as pulumi from '@pulumi/pulumi';
@@ -14,6 +14,7 @@ const createRBACIdentity = (name: string) => {
     const adminGroup = new ad.Group(name, {
         displayName: `AZ ROL ${name.toUpperCase()}`,
         securityEnabled: true,
+        owners: [currentPrincipal],
     });
     //Create Entra App Registration
     const appRegistration = new ad.ApplicationRegistration(name, {
@@ -21,6 +22,14 @@ const createRBACIdentity = (name: string) => {
         displayName: name,
         signInAudience: 'AzureADMyOrg',
     });
+
+    //Add current principal as an owner of the app.
+    new ad.ApplicationOwner(
+        name,
+        { applicationId: appRegistration.id, ownerObjectId: currentPrincipal },
+        { dependsOn: appRegistration }
+    );
+
     //Create App Client Secret
     const appSecret = new ad.ApplicationPassword(
         name,
