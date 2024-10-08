@@ -79,6 +79,14 @@ const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [
         fqdnTags: ['Windows365', 'MicrosoftIntune'],
         protocols: [{ protocolType: 'Https', port: 443 }],
     },
+    {
+        ruleType: 'ApplicationRule',
+        name: `cloudPC-app-allow-Microsoft-Login`,
+        description: 'Allows Microsoft Login',
+        sourceAddresses: [subnetSpaces.cloudPC],
+        targetFqdns: ['login.microsoftonline.com'],
+        protocols: [{ protocolType: 'Https', port: 443 }],
+    },
 ];
 
 export default { appRules, netRules };
