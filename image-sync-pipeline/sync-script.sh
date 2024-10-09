@@ -8,36 +8,48 @@ DOCKER_PASSWORD="$4"
 
 # Read the image list from the specified file
 while IFS= read -r IMAGE; do
-  # Ignore comment lines
-  if [[ $IMAGE == \#* ]]; then
+  # Ignore comment lines and empty lines
+  if [[ $IMAGE == \#* ]] || [[ -z $IMAGE ]]; then
     continue
   fi
 
   # Split the source and destination using '=>' as the delimiter
-  IFS='=>' read -r SOURCE DESTINATION <<< "$IMAGE"
+  # Use parameter expansion to split
+  SOURCE="${IMAGE%%=>*}"
+  DESTINATION="${IMAGE##*=>}"
 
   # Trim whitespace from both source and destination
-  SOURCE=$(echo $SOURCE | xargs)
-  DESTINATION=$(echo $DESTINATION | xargs)
+  SOURCE=$(echo "$SOURCE" | xargs)
+  DESTINATION=$(echo "$DESTINATION" | xargs)
+
+  # Extract the tag from the source image
+  if [[ "$SOURCE" == *:* ]]; then
+    TAG="${SOURCE##*:}"
+  else
+    TAG="latest"
+  fi
+
+  # Append the tag to the destination image
+  DESTINATION_WITH_TAG="$DESTINATION:$TAG"
 
   # Extract the image name from the destination path
   IMAGE_NAME=$(basename "$DESTINATION")
 
   # Print a message indicating the import process
-  echo "Importing $IMAGE_NAME from $SOURCE to $DESTINATION..."
+  echo "Importing $IMAGE_NAME:$TAG from $SOURCE to $DESTINATION_WITH_TAG..."
   
   # Build and execute the az acr import command
   # If the source is from docker.io, include username and password
   if [[ $SOURCE == docker.io* ]]; then
-    az acr import --name "$ACR_NAME" --source "$SOURCE" --image "$DESTINATION" --username $DOCKER_USERNAME --password $DOCKER_PASSWORD --force
+    az acr import --name "$ACR_NAME" --source "$SOURCE" --image "$DESTINATION_WITH_TAG" --username "$DOCKER_USERNAME" --password "$DOCKER_PASSWORD" --force
   else
     # Otherwise, import without authentication
-    az acr import --name "$ACR_NAME" --source "$SOURCE" --image "$DESTINATION" --force
+    az acr import --name "$ACR_NAME" --source "$SOURCE" --image "$DESTINATION_WITH_TAG" --force
   fi
 
   # Confirm the import completion
-  echo "The $IMAGE_NAME has been imported.\n\n"
+  echo -e "The $IMAGE_NAME:$TAG has been imported.\n\n"
   
   # Pause for 15 seconds before processing the next image
   sleep 15
-done
+done < "$IMAGE_LIST_PATH"
