@@ -20,6 +20,8 @@ steps:
     azureSubscription: '$(azureSubscription)'
     scriptType: 'bash'
     scriptLocation: 'scriptPath'
-    scriptPath: 'image-sync-pipeline/sync-script.sh'
+    scriptPath: 'sync-script.sh'
     arguments: '$(acrName) $(templateFile) $(DOCKER_NAME) $(DOCKER_PASS)'
+    useGlobalConfig: true
     workingDirectory: 'image-sync-pipeline'
+    keepAzSessionActive: true
