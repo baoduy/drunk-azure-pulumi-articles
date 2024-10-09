@@ -1,0 +1,24 @@
+trigger:
+- main
+
+variables:
+- group: image-sync
+- name: templateFile
+  value: 'images.txt'
+- name: azureSubscription
+  value: 'az-pulumi'
+- name: acrName
+  value: 'devaksacreb86a9ea'
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- task: AzureCLI@2
+  displayName: 'import images to ACR $(azureSubscription)'
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    scriptType: 'bash'
+    scriptLocation: 'scriptPath'
+    scriptPath: 'sync-script.sh'
+    arguments: '$(acrName) $(templateFile) $(DOCKER_NAME) $(DOCKER_PASS)'
