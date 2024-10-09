@@ -29,7 +29,7 @@ const createRBACIdentity = (name: string) => {
         roleAssignmentName: 'acdd72a7-3385-48ef-bd42-f606fba81ae7',
         roleDefinitionId:
             '/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7',
-        scope: pulumi.interpolate`/${subscriptionId}`,
+        scope: pulumi.interpolate`/subscriptions/${subscriptionId}`,
     });
 
     //Create Entra App Registration
