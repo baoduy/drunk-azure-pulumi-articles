@@ -1,6 +1,7 @@
-registry.k8s.io/ingress-nginx/controller:v1.11.1 => ingress-nginx/controller
-registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.4.1 => ingress-nginx/kube-webhook-certgen
-quay.io/jetstack/cert-manager-controller:v1.15.2 => jetstack/cert-manager-controller
-quay.io/jetstack/cert-manager-webhook:v1.15.2 => jetstack/cert-manager-webhook
-quay.io/jetstack/cert-manager-cainjector:v1.15.2 => jetstack/cert-manager-cainjector
-# docker.io/cloudflare/cloudflared:latest => cloudflare/cloudflared
+#registry.k8s.io/ingress-nginx/controller:v1.11.1 => ingress-nginx/controller
+#registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.4.1 => ingress-nginx/kube-webhook-certgen
+#quay.io/jetstack/cert-manager-controller:v1.15.2 => jetstack/cert-manager-controller
+#quay.io/jetstack/cert-manager-webhook:v1.15.2 => jetstack/cert-manager-webhook
+#quay.io/jetstack/cert-manager-cainjector:v1.15.2 => jetstack/cert-manager-cainjector
+docker.io/cloudflare/cloudflared:latest => cloudflare/cloudflared
+mcr.microsoft.com/azuredocs/aks-helloworld:latest => azuredocs/aks-helloworld 
