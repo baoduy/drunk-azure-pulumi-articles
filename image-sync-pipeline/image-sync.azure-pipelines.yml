@@ -4,7 +4,7 @@ trigger:
 variables:
 - group: image-sync
 - name: templateFile
-  value: 'image-sync-pipeline/images.txt'
+  value: 'images.txt'
 - name: azureSubscription
   value: 'az-pulumi'
 - name: acrName
@@ -22,3 +22,4 @@ steps:
     scriptLocation: 'scriptPath'
     scriptPath: 'image-sync-pipeline/sync-script.sh'
     arguments: '$(acrName) $(templateFile) $(DOCKER_NAME) $(DOCKER_PASS)'
+    workingDirectory: 'image-sync-pipeline'
