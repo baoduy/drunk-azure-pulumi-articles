@@ -4,7 +4,7 @@ trigger:
 variables:
 - group: image-sync
 - name: templateFile
-  value: 'image-sync-pipeline/images.txt'
+  value: '$(Build.SourcesDirectory)/image-sync-pipeline/images.txt'
 - name: azureSubscription
   value: 'az-pulumi'
 - name: acrName
