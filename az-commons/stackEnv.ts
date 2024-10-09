@@ -19,13 +19,13 @@ export const StackReference = <TOutput>(
     ) as pulumi.Output<TOutput>;
 };
 
+/**Get stack reference for current project*/
+export const CurrentProjectReference = <TOutput>() =>
+    StackReference<TOutput>(projectName);
+
 console.log('Pulumi Environments:', {
     organization,
     projectName,
     stack,
     isDryRun,
 });
-
-/**Get stack reference for current project*/
-export const CurrentProjectReference = <TOutput>() =>
-    StackReference<TOutput>(projectName);

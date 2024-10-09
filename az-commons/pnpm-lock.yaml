@@ -9,15 +9,15 @@ importers:
   .:
     dependencies:
       '@pulumi/azure-native':
-        specifier: ^2.64.2
-        version: 2.64.2(typescript@5.6.2)
+        specifier: ^2.65.1
+        version: 2.65.1(typescript@5.6.3)
       '@pulumi/pulumi':
-        specifier: ^3.135.0
-        version: 3.135.0(typescript@5.6.2)
+        specifier: ^3.136.1
+        version: 3.136.1(typescript@5.6.3)
     devDependencies:
       typescript:
-        specifier: ^5.6.2
-        version: 5.6.2
+        specifier: ^5.6.3
+        version: 5.6.3
 
 packages:
 
@@ -212,11 +212,11 @@ packages:
   '@protobufjs/utf8@1.1.0':
     resolution: {integrity: sha512-Vvn3zZrhQZkkBE8LSuW3em98c0FwgO4nxzv6OdSxPKJIEKY2bGbHn+mhGIPerzI4twdxaP8/0+06HBpwf345Lw==}
 
-  '@pulumi/azure-native@2.64.2':
-    resolution: {integrity: sha512-KXsJCOY46907606ipBWQ8kXAtgWJBQWcfla6mCDA2+N+xLi5GcsnMUwiCa5hv5oP+xaKQ7XKJb/xaNzz/ulq7w==}
+  '@pulumi/azure-native@2.65.1':
+    resolution: {integrity: sha512-/hMEeimBv4Dk/JXHiWvvyrCphTXYgcpAFUkJtphBlP6ncKZZN/6D7XNBDnSWtL28DPCttdeA2YyBMkgAa7f73A==}
 
-  '@pulumi/pulumi@3.135.0':
-    resolution: {integrity: sha512-RYsv44UECC8MHtTEGWS6olVFmI9ad8iEySm9xmgoOk8Au6Lulf4phf1HiXEV8+vR9+3Lmtt4pYYdKrRvf4TfhQ==}
+  '@pulumi/pulumi@3.136.1':
+    resolution: {integrity: sha512-bO+AVYKyf4dFDVSbBRoCiwAVE0JhugwAEv5FmWit+VHE3f9eoy1qrw7t5DmGmAiL2cGCwTpvVEIf4y1N7360ZA==}
     engines: {node: '>=18'}
     peerDependencies:
       ts-node: '>= 7.0.1 < 12'
@@ -1013,8 +1013,8 @@ packages:
     resolution: {integrity: sha512-GwIJau9XaA8nLVbUXsN3IlFi7WmQ48gBUrl3FTkkL/XLu/POhBzfmX9hd33FNMX1qAsfl6ozO1iMmW9NC8YniA==}
     engines: {node: ^16.14.0 || >=18.0.0}
 
-  typescript@5.6.2:
-    resolution: {integrity: sha512-NW8ByodCSNCwZeghjN3o+JX5OFH0Ojg6sadjEKY4huZ52TqbJTJnDo5+Tw98lSy63NZvi4n+ez5m2u5d4PkZyw==}
+  typescript@5.6.3:
+    resolution: {integrity: sha512-hjcS1mhfuyi4WW8IWtjP7brDrG2cuDZukyrYrSauoXGNgx0S7zceP07adYkJycEr56BOUTNPzbInooiN3fn1qw==}
     engines: {node: '>=14.17'}
     hasBin: true
 
@@ -1355,16 +1355,16 @@ snapshots:
 
   '@protobufjs/utf8@1.1.0': {}
 
-  '@pulumi/azure-native@2.64.2(typescript@5.6.2)':
+  '@pulumi/azure-native@2.65.1(typescript@5.6.3)':
     dependencies:
-      '@pulumi/pulumi': 3.135.0(typescript@5.6.2)
+      '@pulumi/pulumi': 3.136.1(typescript@5.6.3)
     transitivePeerDependencies:
       - bluebird
       - supports-color
       - ts-node
       - typescript
 
-  '@pulumi/pulumi@3.135.0(typescript@5.6.2)':
+  '@pulumi/pulumi@3.136.1(typescript@5.6.3)':
     dependencies:
       '@grpc/grpc-js': 1.11.3
       '@logdna/tail-file': 2.2.0
@@ -1397,7 +1397,7 @@ snapshots:
       tmp: 0.2.3
       upath: 1.2.0
     optionalDependencies:
-      typescript: 5.6.2
+      typescript: 5.6.3
     transitivePeerDependencies:
       - bluebird
       - supports-color
@@ -2218,7 +2218,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  typescript@5.6.2: {}
+  typescript@5.6.3: {}
 
   undici-types@6.19.8: {}
 
