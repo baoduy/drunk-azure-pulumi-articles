@@ -1,4 +1,9 @@
-import { currentPrincipal, getName, tenantId } from '@az-commons';
+import {
+    currentPrincipal,
+    getName,
+    subscriptionId,
+    tenantId,
+} from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 import * as pulumi from '@pulumi/pulumi';
@@ -16,20 +21,29 @@ const createRBACIdentity = (name: string) => {
         securityEnabled: true,
         owners: [currentPrincipal],
     });
+    //Assign This AKS admin group as readonly at the subscription level
+    new azure.authorization.RoleAssignment(`${name}-readonly`, {
+        principalType: 'Group',
+        principalId: adminGroup.objectId,
+        //ReadOnly Role
+        roleAssignmentName: 'acdd72a7-3385-48ef-bd42-f606fba81ae7',
+        roleDefinitionId:
+            '/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7',
+        scope: pulumi.interpolate`/${subscriptionId}`,
+    });
+
     //Create Entra App Registration
     const appRegistration = new ad.ApplicationRegistration(name, {
         description: name,
         displayName: name,
         signInAudience: 'AzureADMyOrg',
     });
-
     //Add current principal as an owner of the app.
     new ad.ApplicationOwner(
         name,
         { applicationId: appRegistration.id, ownerObjectId: currentPrincipal },
         { dependsOn: appRegistration }
     );
-
     //Create App Client Secret
     const appSecret = new ad.ApplicationPassword(
         name,
