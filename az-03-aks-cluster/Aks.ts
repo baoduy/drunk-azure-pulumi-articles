@@ -134,22 +134,24 @@ export default (
             nodeResourceGroup,
             dnsPrefix: aksName,
 
-            //The server provide: disable run command, and enable private cluster.
+            //Disable public network access as this is a private cluster
+            publicNetworkAccess: 'Disabled',
             apiServerAccessProfile: {
+                //Not allows running command directly from azure portal
                 disableRunCommand: true,
+                //enable private cluster
                 enablePrivateCluster: true,
+                //Enable this to enable public DNS resolver to a private IP Address.
+                //This is necessary for MDM accessing though a Cloudflare tunnel later
                 enablePrivateClusterPublicFQDN: true,
                 privateDNSZone: 'system',
             },
 
-            //Addon profile to enable and disable some built in features
+            //Addon profile to enable and disable some built-in features
             addonProfiles: {
-                azureKeyvaultSecretsProvider: { enabled: false },
+                //Enable the azure policy. We will discuss this feature in a separate topic.
                 azurePolicy: { enabled: true },
-                kubeDashboard: { enabled: false },
-                httpApplicationRouting: { enabled: false },
-                aciConnectorLinux: { enabled: false },
-                ingressApplicationGateway: { enabled: false },
+                //Enable container insights
                 omsAgent: {
                     enabled: Boolean(logWorkspaceId),
                     config: logWorkspaceId
@@ -164,7 +166,7 @@ export default (
             supportPlan:
                 azure.containerservice.KubernetesSupportPlan.KubernetesOfficial,
 
-            //The node pool profile: this will setup the subnetId, auto scale and disk space setup
+            //The node pool profile: this will set up the subnetId, auto-scale and disk space setup
             agentPoolProfiles: [
                 {
                     name: 'defaultnodes',
@@ -198,7 +200,7 @@ export default (
                 adminUsername: nodeAdminUserName,
                 ssh: { publicKeys: [{ keyData: ssh.publicKey }] },
             },
-            //service profile to setup EntraID identity.
+            //service profile to set up EntraID identity.
             servicePrincipalProfile: {
                 clientId: aksIdentity.appRegistration.clientId,
                 secret: aksIdentity.appSecret.value,
