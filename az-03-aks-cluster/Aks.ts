@@ -49,7 +49,7 @@ const createRBACIdentity = (
             name: 'Azure Kubernetes Service RBAC Reader',
             id: '7f6c6a51-bcf8-42ba-9220-52d62157d7db',
         },
-        { name: 'ReadOnly', id: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' },
+        //{ name: 'ReadOnly', id: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' },
     ].map(
         (r) =>
             new azure.authorization.RoleAssignment(
