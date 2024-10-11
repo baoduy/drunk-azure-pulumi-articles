@@ -38,7 +38,7 @@ steps:
   - task: replacetokens@6
     displayName: 'Prepare Helm'
     inputs:
-      sources: $(valueFile)
+      sources: '$(chart)/$(valueFile)'
       tokenPattern: 'githubactions'
       caseInsensitivePaths: false
       includeDotPaths: false
