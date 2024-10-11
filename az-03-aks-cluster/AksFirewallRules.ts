@@ -20,6 +20,25 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
         ],
         destinationPorts: ['443'],
     },
+    {
+        ruleType: 'NetworkRule',
+        name: 'aks-allows-commons-dns',
+        description: 'Others DNS.',
+        ipProtocols: ['TCP', 'UDP'],
+        //This rule will allow the entire network.
+        sourceAddresses: ['*'],
+        destinationAddresses: [
+            //Azure
+            '168.63.129.16',
+            //CloudFlare
+            '1.1.1.1',
+            '1.0.0.1',
+            //Google
+            '8.8.8.8',
+            '8.8.4.4',
+        ],
+        destinationPorts: ['53'],
+    },
 ];
 
 const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [
