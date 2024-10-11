@@ -1,5 +1,5 @@
 trigger:
-- main
+  - releases/*
 
 variables:
 - group: image-sync
