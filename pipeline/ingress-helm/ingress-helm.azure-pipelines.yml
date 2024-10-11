@@ -2,7 +2,7 @@ trigger:
 - releases/*
 
 variables:
-- group: cf-secrets
+- group: cf-dns
 - name: env_name
   value: $(build.sourceBranchName)
 - name: azureSubscription
