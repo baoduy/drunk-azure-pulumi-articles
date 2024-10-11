@@ -24,8 +24,8 @@ variables:
   value: 'pipeline/ingress-helm/values-dev.yaml'
 
 pool:
-  # As our AKS is a private cluster. We need to use the private agent pool instead.
-  name: cloud-agents
+  # As our AKS is a private cluster. We need to use the private agent pool created before instead.
+  name: Research-cloud-agents
 
 steps:
   # This step will replace all ${{}} tokens from YAML file by the pipeline variables (either from the variable group, key vault or inline variables above).
