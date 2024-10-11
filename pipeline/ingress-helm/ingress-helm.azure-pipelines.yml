@@ -1,5 +1,10 @@
 trigger:
-- releases/*
+  branches:
+    include:
+      - releases/*
+    exclude:
+      - main
+pr: none
 
 variables:
 - group: cf-dns
