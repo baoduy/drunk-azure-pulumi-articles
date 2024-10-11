@@ -1,0 +1,47 @@
+trigger:
+- releases/*
+
+variables:
+- group: cf-secrets
+- name: env_name
+  value: $(build.sourceBranchName)
+- name: azureSubscription
+  value: 'az-pulumi'
+- name: acrName
+  value: 'devaksacreb86a9ea'
+- name: private-ip
+  value: '192.168.31.250'
+- name: valueFile
+  value: 'pipeline/ingress-helm/values-dev.yaml'
+
+pool:
+  # As our AKS is a private cluster. We need to use the private agent pool instead.
+  pool: cloud-agents
+
+steps:
+  # This step will replace all ${{}} tokens from YAML file by the pipeline variables (either from the variable group, key vault or inline variables above).
+  # It will raise error to stop the pipeline if any variables are not found.
+  - task: replacetokens@6
+    displayName: 'Prepare Helm'
+    inputs:
+      sources: $(valueFile)
+      tokenPattern: 'githubactions'
+      caseInsensitivePaths: false
+      includeDotPaths: false
+      missingVarLog: 'error'
+      ifNoFilesFound: 'error'
+
+  # Deploy Helm to AKS
+  - task: HelmDeploy@0
+    displayName: 'Deploy Helm'
+    inputs:
+      connectionType: 'Kubernetes Service Connection'
+      kubernetesServiceConnection: '$(aks-conn)'
+      namespace: 'nginx-ingress'
+      command: 'upgrade'
+      chartType: 'FilePath'
+      chartPath: './pipeline/ingress-helm'
+      releaseName: 'nginx-ingress'
+      valueFile: '$(valueFile)'
+      waitForExecution: false
+      arguments: '--create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify'

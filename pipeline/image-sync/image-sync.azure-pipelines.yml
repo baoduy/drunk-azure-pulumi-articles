@@ -4,7 +4,7 @@ trigger:
 variables:
 - group: image-sync
 - name: templateFile
-  value: '$(Build.SourcesDirectory)/image-sync-pipeline/images.txt'
+  value: '$(Build.SourcesDirectory)/pipeline/image-sync/images.txt'
 - name: azureSubscription
   value: 'az-pulumi'
 - name: acrName
@@ -20,7 +20,7 @@ steps:
     azureSubscription: '$(azureSubscription)'
     scriptType: 'bash'
     scriptLocation: 'scriptPath'
-    scriptPath: 'image-sync-pipeline/sync-script.sh'
+    scriptPath: 'pipeline/image-sync/sync-script.sh'
     arguments: '$(acrName) $(templateFile) $(DOCKER_NAME) $(DOCKER_PASS)'
     useGlobalConfig: true
     keepAzSessionActive: true

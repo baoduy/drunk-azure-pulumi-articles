@@ -1,0 +1,83 @@
+# https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/values.yaml
+nginx:
+  enabled: true
+  controller:
+    image:
+      registry: '${{acrName}}.azurecr.io'
+      image: 'ingress-nginx/controller'
+      tag: "v1.11.1"
+    admissionWebhooks:
+      patch:
+        image:
+          registry: '${{acrName}}.azurecr.io'
+          image: 'ingress-nginx/kube-webhook-certgen'
+          tag: 'v1.4.1'
+    hostNetwork: 'false'
+    useIngressClassOnly: 'true'
+    watchIngressWithoutClass: 'true'
+    ingressClass: 'internal'
+    ingressClassResource:
+      name: 'internal'
+      enabled: true
+      default: true
+      controllerValue: k8s.io/ingress-nginx
+    allowSnippetAnnotations: 'false'
+    replicaCount: 2
+    autoscaling:
+      enabled: false
+    service:
+      annotations:
+        service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
+      externalTrafficPolicy: 'Local'
+      loadBalancerIP: '${{private-ip}}'
+    config:
+      useForwardedHeaders: 'true'
+      computeFullForwardedFor: 'true'
+      useProxyProtocol: 'true'
+      use-forwarded-headers: 'true'
+      disable-access-log: 'true'
+      proxy-buffer-size: '800k'
+      client-header-buffer-size: '800k'
+      client_max_body_size: '10m'
+      enable-modsecurity: 'true'
+      enable-owasp-modsecurity-crs: 'true'
+      worker-shutdown-timeout: '100s'
+      worker-connections: '1024'
+      worker-processes: 'auto'
+      annotation-value-word-blocklist: 'load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},\\'
+    resources:
+      limits:
+        cpu: '1'
+        memory: '1Gi'
+      requests:
+        cpu: '10m'
+        memory: '10Mi'
+#===========Cert-manager=======================
+certmanager:
+  enabled: true
+  enableIssuer: true
+  email: 'admin@${{cf-domain}}'
+  cfToken: '${{cf-dns-token}}'
+  # cert-manager controller
+  image:
+    repository: '${{acrName}}.azurecr.io/jetstack/cert-manager-controller'
+    tag: v1.15.2
+  # cert-manager webhook
+  webhook:
+    image:
+      repository: '${{acrName}}.azurecr.io/jetstack/cert-manager-webhook'
+      tag: v1.15.2
+  # cert-manager cainjector
+  cainjector:
+    image:
+      repository: '${{acrName}}.azurecr.io/jetstack/cert-manager-cainjector'
+      tag: v1.15.2
+  # Configuration for the domain
+  installCRDs: true
+  ingressShim:
+    defaultIssuerName: "letsencrypt-prod"
+    defaultIssuerKind: "ClusterIssuer"
+    defaultIssuerGroup: "cert-manager.io"
+  extraArgs:
+    - --dns01-recursive-nameservers-only
+    - --dns01-recursive-nameservers=1.1.1.1:53
