@@ -22,7 +22,11 @@ variables:
 - name: private-ip
   value: '192.168.31.250'
 - name: valueFile
-  value: 'pipeline/ingress-helm/values-dev.yaml'
+  value: 'values-dev.yaml'
+- name: chart
+  value: '$(Build.SourcesDirectory)/pipeline/ingress-helm'
+- name: releaseName
+  value: 'nginx-ingress'
 
 pool:
   # As our AKS is a private cluster. We need to use the private agent pool.
@@ -34,26 +38,37 @@ steps:
   - task: replacetokens@6
     displayName: 'Prepare Helm'
     inputs:
-      sources: $(valueFile)
+      sources: '$(chart)/$(valueFile)'
       tokenPattern: 'githubactions'
       caseInsensitivePaths: false
       includeDotPaths: false
       missingVarLog: 'error'
       ifNoFilesFound: 'error'
 
-  # Deploy Helm to AKS
-  - task: HelmDeploy@0
-    displayName: 'Deploy Helm'
+  # Deploy Helm to AKS using Service Principal
+  - task: AzureCLI@2
     inputs:
-      connectionType: 'Azure Resource Manager'
       azureSubscription: '$(azureSubscription)'
-      azureResourceGroup: '$(rsGroup)'
-      kubernetesCluster: '$(aksName)'
-      namespace: 'nginx-ingress'
-      command: 'upgrade'
-      chartType: 'FilePath'
-      chartPath: './pipeline/ingress-helm'
-      releaseName: 'nginx-ingress'
-      valueFile: '$(valueFile)'
-      waitForExecution: false
-      arguments: '--create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        az aks get-credentials --resource-group $(rsGroup) --name $(aksName) --overwrite-existing --public-fqdn
+        kubelogin convert-kubeconfig -l azurecli
+
+        helm upgrade --namespace nginx-ingress --install --values '$(chart)/$(valueFile)' --create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify  $(releaseName) $(chart)
+
+  # - task: HelmDeploy@0
+  #   displayName: 'Deploy Helm'
+  #   inputs:
+  #     connectionType: 'Azure Resource Manager'
+  #     azureSubscription: '$(azureSubscription)'
+  #     azureResourceGroup: '$(rsGroup)'
+  #     kubernetesCluster: '$(aksName)'
+  #     namespace: 'nginx-ingress'
+  #     command: 'upgrade'
+  #     chartType: 'FilePath'
+  #     chartPath: './pipeline/ingress-helm'
+  #     releaseName: 'nginx-ingress'
+  #     valueFile: '$(valueFile)'
+  #     waitForExecution: false
+  #     arguments: '--create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify'
