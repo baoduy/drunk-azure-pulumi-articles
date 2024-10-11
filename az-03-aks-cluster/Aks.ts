@@ -1,9 +1,4 @@
-import {
-    currentPrincipal,
-    getName,
-    subscriptionId,
-    tenantId,
-} from '@az-commons';
+import { currentPrincipal, getName, tenantId } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 import * as pulumi from '@pulumi/pulumi';
@@ -13,23 +8,16 @@ import SshGenerator from './SshGenerator';
 /** AKS required an Entra Application Registration with an Entra Admin Group inorder to enable the RBAC access.
  * We will create them here before create AKS resource.
  * */
-const createRBACIdentity = (name: string) => {
+const createRBACIdentity = (
+    name: string,
+    rsGroup: azure.resources.ResourceGroup
+) => {
     name = getName(name, 'Admin');
     //Create Entra Admin Group
     const adminGroup = new ad.Group(name, {
         displayName: `AZ ROL ${name.toUpperCase()}`,
         securityEnabled: true,
         owners: [currentPrincipal],
-    });
-    //Assign This AKS admin group as readonly at the subscription level
-    new azure.authorization.RoleAssignment(`${name}-readonly`, {
-        principalType: 'Group',
-        principalId: adminGroup.objectId,
-        //ReadOnly Role
-        roleAssignmentName: 'acdd72a7-3385-48ef-bd42-f606fba81ae7',
-        roleDefinitionId:
-            '/providers/Microsoft.Authorization/roleDefinitions/acdd72a7-3385-48ef-bd42-f606fba81ae7',
-        scope: pulumi.interpolate`/subscriptions/${subscriptionId}`,
     });
 
     //Create Entra App Registration
@@ -49,6 +37,32 @@ const createRBACIdentity = (name: string) => {
         name,
         { applicationId: appRegistration.id },
         { dependsOn: appRegistration }
+    );
+
+    //Grant Azure permission to the Admin Group at the Resource Group level
+    [
+        {
+            name: 'Azure Kubernetes Service Cluster User Role',
+            id: '4abbcc35-e782-43d8-92c5-2d3f1bd2253f',
+        },
+        {
+            name: 'Azure Kubernetes Service RBAC Reader',
+            id: '7f6c6a51-bcf8-42ba-9220-52d62157d7db',
+        },
+        { name: 'ReadOnly', id: 'acdd72a7-3385-48ef-bd42-f606fba81ae7' },
+    ].map(
+        (r) =>
+            new azure.authorization.RoleAssignment(
+                `${name}-${r.id}`,
+                {
+                    principalType: 'Group',
+                    principalId: adminGroup.objectId,
+                    roleAssignmentName: r.id,
+                    roleDefinitionId: `/providers/Microsoft.Authorization/roleDefinitions/${r.id}`,
+                    scope: rsGroup.id,
+                },
+                { dependsOn: rsGroup }
+            )
     );
 
     //Return the results
@@ -132,7 +146,7 @@ export default (
         };
     }
 ) => {
-    const aksIdentity = createRBACIdentity(name);
+    const aksIdentity = createRBACIdentity(name, rsGroup);
     const ssh = createSsh(name, vaultInfo);
 
     const aksName = getName(name, 'cluster');
