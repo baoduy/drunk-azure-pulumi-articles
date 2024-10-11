@@ -47,6 +47,7 @@ steps:
 
   # Deploy Helm to AKS using Service Principal
   - task: AzureCLI@2
+    displayName: 'Deploy Helm'
     inputs:
       azureSubscription: '$(azureSubscription)'
       scriptType: 'bash'
