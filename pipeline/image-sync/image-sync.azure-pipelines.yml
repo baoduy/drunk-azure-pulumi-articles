@@ -1,11 +1,11 @@
 trigger: none
-# uncomment this for auto trigger
+# uncomment this to enable auto trigger.
 #  branches:
 #    include:
-#      - releases/*
+#    - releases/*
 #    exclude:
-#      - main
-#pr: none
+#    - main
+pr: none
 
 variables:
 - group: image-sync
