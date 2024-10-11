@@ -46,7 +46,7 @@ const generateLogin = (name: string, vault: VaultInfo) => {
 };
 
 /**
- * THis Vm will be a linux VM
+ * Create a Linux VM:
  * - `username` and `password` will be generated using pulumi random and store in Key Vault.
  * - The AzureDevOps extension will be installed automatically and become a private AzureDevOps agent.
  * - It will be encrypted with a custom key from Key Vault also.
@@ -60,12 +60,19 @@ export default (
         vmSize = 'Standard_B2s',
         diskEncryptionSet,
         vnet,
+        azureDevOps,
     }: {
         vmSize: string;
         rsGroup: azure.resources.ResourceGroup;
         diskEncryptionSet: azure.compute.DiskEncryptionSet;
         vault: VaultInfo;
         vnet: azure.network.VirtualNetwork;
+        azureDevOps?: {
+            VSTSAccountUrl: pulumi.Input<string>;
+            TeamProject: pulumi.Input<string>;
+            DeploymentGroup: pulumi.Input<string>;
+            PATToken: pulumi.Input<string>;
+        };
     }
 ) => {
     const vmName = getName(name, 'vm');
@@ -179,5 +186,39 @@ export default (
         }
     );
 
+    //Install AzureDevOps extensions
+    if (azureDevOps) {
+        //Follow the instruction here: https://learn.microsoft.com/en-us/azure/devops/pipelines/release/deployment-groups/howto-provision-deployment-group-agents?view=azure-devops
+        vm.name.apply(
+            (n) =>
+                new azure.compute.VirtualMachineExtension(
+                    `${n}-devops-extension`,
+                    {
+                        vmExtensionName: 'TeamServicesAgentLinux',
+                        vmName: n,
+                        resourceGroupName: rsGroup.name,
+                        enableAutomaticUpgrade: false,
+                        suppressFailures: false,
+                        publisher: 'Microsoft.VisualStudio.Services',
+                        type: 'TeamServicesAgentLinux',
+                        typeHandlerVersion: '1.0',
+                        autoUpgradeMinorVersion: true,
+                        settings: {
+                            VSTSAccountName: azureDevOps.VSTSAccountUrl,
+                            TeamProject: azureDevOps.TeamProject,
+                            DeploymentGroup: azureDevOps.DeploymentGroup,
+                            AgentMajorVersion: '3',
+                            AgentName: vmName,
+                        },
+                        protectedSettings: {
+                            PATToken: azureDevOps.PATToken,
+                        },
+                    },
+                    {
+                        dependsOn: vm,
+                    }
+                )
+        );
+    }
     return vm;
 };

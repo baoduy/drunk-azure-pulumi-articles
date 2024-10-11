@@ -91,6 +91,12 @@ const vm = VM('devops-agent-01', {
     vmSize: 'Standard_B2s',
     vault,
     vnet,
+    azureDevOps: {
+        VSTSAccountUrl: 'transwap',
+        TeamProject: 'Research',
+        DeploymentGroup: 'cloud-agents',
+        PATToken: new pulumi.Config().requireSecret('devops-pat'),
+    },
 });
 
 //Create Private DNS Zone
