@@ -20,7 +20,7 @@ variables:
 
 pool:
   # As our AKS is a private cluster. We need to use the private agent pool instead.
-  pool: cloud-agents
+  name: cloud-agents
 
 steps:
   # This step will replace all ${{}} tokens from YAML file by the pipeline variables (either from the variable group, key vault or inline variables above).
