@@ -1,9 +1,10 @@
-trigger:
-  branches:
-    include:
-      - releases/*
-    exclude:
-      - main
+trigger: none
+# uncomment this to enable auto trigger.
+#  branches:
+#    include:
+#    - releases/*
+#    exclude:
+#    - main
 pr: none
 
 variables:
