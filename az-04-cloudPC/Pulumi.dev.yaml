@@ -1,4 +1,2 @@
 config:
-  az-04-cloudPC:devops-pat:
-    secure: AAABAPwlGzr7WhI3wJ1CzzltYDLur4t0YwYsf35GsCnKmrstlBc/8cl+nO86SISI8RjUezJiHdTSvR3I3KTRM931gYHbBtQsKBXmuWUgCrWEAN8D
   azure-native:location: SoutheastAsia

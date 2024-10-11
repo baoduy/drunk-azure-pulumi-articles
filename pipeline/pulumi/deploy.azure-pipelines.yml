@@ -1,11 +1,10 @@
 trigger:
-# uncomment this for auto trigger
-#  branches:
-#    include:
-#    - releases/*
-#    exclude:
-#    - main
-#pr: none
+  branches:
+    include:
+    - releases/*
+    exclude:
+    - main
+pr: none
 
 pool:
   vmImage: ubuntu-latest
