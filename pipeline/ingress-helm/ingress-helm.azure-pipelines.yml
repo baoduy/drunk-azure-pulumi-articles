@@ -7,6 +7,10 @@ variables:
   value: $(build.sourceBranchName)
 - name: azureSubscription
   value: 'az-pulumi'
+- name: rsGroup
+  value: 'dev-03-aks72e74d22'
+- name: aksName
+  value: 'dev-aks-clusterfe073605'
 - name: acrName
   value: 'devaksacreb86a9ea'
 - name: private-ip
@@ -35,8 +39,10 @@ steps:
   - task: HelmDeploy@0
     displayName: 'Deploy Helm'
     inputs:
-      connectionType: 'Kubernetes Service Connection'
-      kubernetesServiceConnection: '$(aks-conn)'
+      connectionType: 'Azure Resource Manager'
+      azureSubscription: '$(azureSubscription)'
+      azureResourceGroup: '$(rsGroup)'
+      kubernetesCluster: '$(aksName)'
       namespace: 'nginx-ingress'
       command: 'upgrade'
       chartType: 'FilePath'
