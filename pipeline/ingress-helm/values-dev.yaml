@@ -55,11 +55,6 @@ nginx:
 #===========Cert-manager=======================
 certmanager:
   enabled: true
-  # the first deployment this need to be 'false'
-  # after cert-manager deployed then enable this to deploy 'lets-encrypt' cluster issuer.
-  enableIssuer: false
-  email: 'admin@${{cf-domain}}'
-  cfToken: '${{cf-dns-token}}'
   # cert-manager controller
   image:
     repository: '${{acrName}}.azurecr.io/jetstack/cert-manager-controller'
@@ -83,3 +78,11 @@ certmanager:
   extraArgs:
     - --dns01-recursive-nameservers-only
     - --dns01-recursive-nameservers=1.1.1.1:53
+
+#===========lets-encrypt-issuer=======================
+letsencrypt:
+  # the first deployment this need to be 'false'
+  # after cert-manager deployed then enable this to deploy 'lets-encrypt' cluster issuer.
+  enabled: false
+  email: 'admin@${{cf-domain}}'
+  cfToken: '${{cf-dns-token}}'
