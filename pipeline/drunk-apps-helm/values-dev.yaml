@@ -13,24 +13,6 @@ hello-world:
     liveness: '/healthz'
     ports:
       http: 80
-  resources:
-    limits:
-      cpu: 1
-      memory: 1Gi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-  podSecurityContext:
-    fsGroup: 10000
-    runAsUser: 10000
-    runAsGroup: 10000
-  securityContext:
-    capabilities:
-      drop:
-        - ALL
-    readOnlyRootFilesystem: false
-    allowPrivilegeEscalation: false
-    runAsNonRoot: true
   ingress:
     enabled: true
     # the className of the nginx ingress

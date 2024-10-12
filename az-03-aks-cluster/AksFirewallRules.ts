@@ -62,6 +62,10 @@ const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [
             'login.microsoftonline.com',
             'packages.microsoft.com',
             'acs-mirror.azureedge.net',
+            //allows lets-encrypt
+            'acme-v02.api.letsencrypt.org',
+            //allows cloudflare api
+            'api.cloudflare.com',
         ],
         protocols: [{ protocolType: 'Https', port: 443 }],
     },
