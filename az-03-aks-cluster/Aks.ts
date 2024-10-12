@@ -30,7 +30,7 @@ const createRBACIdentity = (
     new ad.ApplicationOwner(
         name,
         { applicationId: appRegistration.id, ownerObjectId: currentPrincipal },
-        { dependsOn: appRegistration }
+        { dependsOn: appRegistration, retainOnDelete: true }
     );
     //Create App Client Secret
     const appSecret = new ad.ApplicationPassword(
