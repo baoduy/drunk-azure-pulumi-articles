@@ -286,7 +286,7 @@ export default (
         `${aksName}-contribute-rsGroup`,
         {
             principalType: 'ServicePrincipal',
-            principalId: aks.identity!.principalId,
+            principalId: aks.identity.apply((i) => i!.principalId!),
             roleAssignmentName: 'b24988ac-6180-42a0-ab88-20f7382dd24c',
             roleDefinitionId:
                 '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
