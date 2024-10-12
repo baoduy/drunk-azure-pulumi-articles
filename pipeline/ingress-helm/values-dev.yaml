@@ -55,7 +55,9 @@ nginx:
 #===========Cert-manager=======================
 certmanager:
   enabled: true
-  enableIssuer: true
+  # the first deployment this need to be 'false'
+  # after cert-manager deployed then enable this to deploy 'lets-encrypt' cluster issuer.
+  enableIssuer: false
   email: 'admin@${{cf-domain}}'
   cfToken: '${{cf-dns-token}}'
   # cert-manager controller

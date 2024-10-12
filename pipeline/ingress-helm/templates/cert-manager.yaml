@@ -1,0 +1,20 @@
+{{- if and .Values.certmanager.enabled .Values.certmanager.enableIssuer }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-prod
+  namespace: '{{ .Release.Namespace }}'
+spec:
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: '{{ .Values.certmanager.email }}'
+    privateKeySecretRef:
+      name: letsencrypt-prod
+    solvers:
+    - dns01:
+        cloudflare:
+          email: '{{ .Values.certmanager.email }}'
+          apiTokenSecretRef:
+            name: cf-dns-secret
+            key: token
+{{- end }}
