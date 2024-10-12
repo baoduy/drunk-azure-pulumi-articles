@@ -13,23 +13,23 @@ cf-tunnel:
       - run
       - '--token'
       - $(token)
-    secrets:
-      token: '${{cf-tunnel-token}}'
-    resources:
-      limits:
-        cpu: 1
-        memory: 1Gi
-      requests:
-        cpu: 100m
-        memory: 128Mi
-    podSecurityContext:
-      fsGroup: 10000
-      runAsUser: 10000
-      runAsGroup: 10000
-    securityContext:
-      capabilities:
-        drop:
-          - ALL
-      readOnlyRootFilesystem: true
-      allowPrivilegeEscalation: false
-      runAsNonRoot: true
+  secrets:
+    token: '${{cf-tunnel-token}}'
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+  podSecurityContext:
+    fsGroup: 10000
+    runAsUser: 10000
+    runAsGroup: 10000
+  securityContext:
+    capabilities:
+      drop:
+        - ALL
+    readOnlyRootFilesystem: true
+    allowPrivilegeEscalation: false
+    runAsNonRoot: true
