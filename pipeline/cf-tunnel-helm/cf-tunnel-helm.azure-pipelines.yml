@@ -1,0 +1,68 @@
+trigger: none
+# uncomment this to enable auto trigger.
+#  branches:
+#    include:
+#    - releases/*
+#    exclude:
+#    - main
+pr: none
+
+variables:
+- name: env_name
+  value: $(build.sourceBranchName)
+- name: azureSubscription
+  value: 'az-pulumi'
+- name: vaultName
+  value: 'dev-shared-vltc3ff351b'
+- name: rsGroup
+  value: 'dev-03-aks72e74d22'
+- name: aksName
+  value: 'dev-aks-clusterfe073605'
+- name: acrName
+  value: 'devaksacreb86a9ea'
+- name: valueFile
+  value: 'values-dev.yaml'
+- name: chart
+  value: '$(Build.SourcesDirectory)/pipeline/cf-tunnel-helm'
+- name: releaseName
+  value: 'cf-system'
+
+pool:
+  # As our AKS is a private cluster. We need to use the private agent pool.
+  name: aks-agents
+
+steps:
+  # Download the secret from the Key vault
+  - task: AzureKeyVault@2
+    displayName: 'Download Secrets from KeyVault'
+    inputs:
+      azureSubscription: $(azureSubscription)
+      KeyVaultName: $(vaultName)
+      SecretsFilter: 'cf-tunnel-token'
+      RunAsPreJob: false
+
+  # Replace the `cf-tunnel-token` into the helm
+  - task: replacetokens@6
+    displayName: 'Prepare Helm'
+    inputs:
+      sources: '$(chart)/$(valueFile)'
+      tokenPattern: 'githubactions'
+      caseInsensitivePaths: false
+      includeDotPaths: false
+      missingVarLog: 'error'
+      ifNoFilesFound: 'error'
+
+  # Deploy Helm to AKS using Service Principal
+  - task: AzureCLI@2
+    displayName: 'Deploy Helm'
+    inputs:
+      azureSubscription: '$(azureSubscription)'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        # login to AKS using Service Principal
+        az aks get-credentials --resource-group $(rsGroup) --name $(aksName) --overwrite-existing --public-fqdn
+        kubelogin convert-kubeconfig -l azurecli
+        
+        # Deploy Helm Chart
+        helm upgrade --namespace $(releaseName) --install --values '$(chart)/$(valueFile)' --create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify  $(releaseName) $(chart)

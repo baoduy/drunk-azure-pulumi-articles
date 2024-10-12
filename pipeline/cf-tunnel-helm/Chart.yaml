@@ -1,0 +1,13 @@
+apiVersion: v2
+name: cf-system
+description: The template to deploy cloudflare tunnel to Kubernetes
+type: application
+version: 1.0.0
+appVersion: 'latest'
+
+dependencies:
+  - name: drunk-app
+    alias: cf-tunnel
+    version: 1.x.x
+    condition: cf-tunnel.enabled
+    repository: https://baoduy.github.io/drunk.charts/drunk-app
