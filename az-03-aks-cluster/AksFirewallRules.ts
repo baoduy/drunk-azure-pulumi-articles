@@ -16,8 +16,11 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
         destinationAddresses: [
             'MicrosoftContainerRegistry',
             'AzureMonitor',
+            'AzureBackup',
             'AzureKeyVault',
             'AzureContainerRegistry',
+            'Storage',
+            'AzureActiveDirectory',
         ],
         destinationPorts: ['443'],
     },
