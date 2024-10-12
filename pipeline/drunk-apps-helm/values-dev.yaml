@@ -10,9 +10,8 @@ hello-world:
   deployment:
     enabled: true
     replicaCount: 1
-    liveness: '/healthz'
-    ports:
-      http: 80
+#    ports:
+#      http: 80
   ingress:
     enabled: true
     # the className of the nginx ingress
