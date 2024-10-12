@@ -280,6 +280,21 @@ export default (
         }
     );
 
+    //Grant contribute permission to aks identity on the rsGroup
+    //This is required to create some azure resources for ingress like IP Address or Load-balancer
+    new azure.authorization.RoleAssignment(
+        `${aksName}-contribute-rsGroup`,
+        {
+            principalType: 'ServicePrincipal',
+            principalId: aks.identity!.principalId,
+            roleAssignmentName: 'b24988ac-6180-42a0-ab88-20f7382dd24c',
+            roleDefinitionId:
+                '/providers/Microsoft.Authorization/roleDefinitions/b24988ac-6180-42a0-ab88-20f7382dd24c',
+            scope: rsGroup.id,
+        },
+        { dependsOn: [rsGroup, aks] }
+    );
+
     //If ACR is provided, then grant permission to allow AKS to download image from ACR
     if (acr) {
         new azure.authorization.RoleAssignment(
