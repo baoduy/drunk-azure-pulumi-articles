@@ -9,7 +9,7 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
     // Network Rule for AKS
     {
         ruleType: 'NetworkRule',
-        name: 'azure-services-tags',
+        name: 'azure-net-services-tags',
         description: 'Allows internal services to connect to Azure Resources.',
         ipProtocols: ['TCP'],
         sourceAddresses: [subnetSpaces.aks],
@@ -26,7 +26,7 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
     },
     {
         ruleType: 'NetworkRule',
-        name: 'aks-allows-commons-dns',
+        name: 'aks-net-allows-commons-dns',
         description: 'Others DNS.',
         ipProtocols: ['TCP', 'UDP'],
         //This rule will allow the entire network.
@@ -42,6 +42,37 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
             '8.8.4.4',
         ],
         destinationPorts: ['53'],
+    },
+    {
+        ruleType: 'NetworkRule',
+        name: 'aks-net-allows-cf-tunnel',
+        description: 'Allows Cloudflare Tunnel',
+        ipProtocols: ['TCP', 'UDP'],
+        //This rule will allow the entire network.
+        sourceAddresses: [subnetSpaces.aks],
+        destinationAddresses: [
+            '198.41.192.167',
+            '198.41.192.67',
+            '198.41.192.57',
+            '198.41.192.107',
+            '198.41.192.27',
+            '198.41.192.7',
+            '198.41.192.227',
+            '198.41.192.47',
+            '198.41.192.37',
+            '198.41.192.77',
+            '198.41.200.13',
+            '198.41.200.193',
+            '198.41.200.33',
+            '198.41.200.233',
+            '198.41.200.53',
+            '198.41.200.63',
+            '198.41.200.113',
+            '198.41.200.73',
+            '198.41.200.43',
+            '198.41.200.23',
+        ],
+        destinationPorts: ['7844'],
     },
 ];
 
@@ -68,6 +99,22 @@ const appRules: pulumi.Input<inputs.network.ApplicationRuleArgs>[] = [
             'api.cloudflare.com',
         ],
         protocols: [{ protocolType: 'Https', port: 443 }],
+    },
+    {
+        ruleType: 'ApplicationRule',
+        name: `aks-app-allow-cloudflare`,
+        description: 'Allows CF Tunnel to access to Cloudflare.',
+        sourceAddresses: [subnetSpaces.aks],
+        targetFqdns: [
+            '*.argotunnel.com',
+            '*.cftunnel.com',
+            '*.cloudflareaccess.com',
+            '*.cloudflareresearch.com',
+        ],
+        protocols: [
+            { protocolType: 'Https', port: 443 },
+            { protocolType: 'Https', port: 7844 },
+        ],
     },
 ];
 
