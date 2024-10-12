@@ -17,7 +17,6 @@ const createRBACIdentity = (
     const adminGroup = new ad.Group(name, {
         displayName: `AZ ROL ${name.toUpperCase()}`,
         securityEnabled: true,
-        owners: [currentPrincipal],
     });
 
     //Create Entra App Registration
@@ -26,6 +25,13 @@ const createRBACIdentity = (
         displayName: name,
         signInAudience: 'AzureADMyOrg',
     });
+
+    //Add current principal as an owner of the app.
+    new ad.ApplicationOwner(
+        name,
+        { applicationId: appRegistration.id, ownerObjectId: currentPrincipal },
+        { dependsOn: appRegistration, retainOnDelete: true }
+    );
 
     //Create App Client Secret
     const appSecret = new ad.ApplicationPassword(
