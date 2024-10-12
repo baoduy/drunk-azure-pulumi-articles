@@ -1,0 +1,14 @@
+apiVersion: v2
+name: drunk-apps
+description: The template to deploy applications to Kubernetes
+type: application
+version: 1.0.0
+appVersion: 'latest'
+
+dependencies:
+  # hello-world-apps
+  - name: drunk-app
+    alias: toolbox
+    version: 1.x.x
+    condition: hello-world.enabled
+    repository: https://baoduy.github.io/drunk.charts/drunk-app

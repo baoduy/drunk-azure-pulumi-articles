@@ -8,7 +8,6 @@ trigger: none
 pr: none
 
 variables:
-- group: cf-dns
 - name: env_name
   value: $(build.sourceBranchName)
 - name: azureSubscription
@@ -19,14 +18,12 @@ variables:
   value: 'dev-aks-clusterfe073605'
 - name: acrName
   value: 'devaksacreb86a9ea'
-- name: private-ip
-  value: '192.168.31.250'
 - name: valueFile
   value: 'values-dev.yaml'
 - name: chart
-  value: '$(Build.SourcesDirectory)/pipeline/ingress-helm'
+  value: '$(Build.SourcesDirectory)/pipeline/drunk-apps-helm'
 - name: releaseName
-  value: 'nginx-ingress'
+  value: 'drunk-apps'
 
 pool:
   # As our AKS is a private cluster. We need to use the private agent pool.

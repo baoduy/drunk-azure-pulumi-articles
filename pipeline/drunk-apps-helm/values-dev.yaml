@@ -1,0 +1,23 @@
+#====================hello-world=======================
+hello-world:
+  enabled: true
+  global:
+    # this image is a sample image was provided by Microsoft AKS team for demo purposes.
+    image: '${{acrName}}.azurecr.io/azuredocs/aks-helloworld'
+    tag: 'v1'
+  ingress:
+    enabled: true
+    # the className of the nginx ingress
+    className: 'internal'
+    annotations:
+      kubernetes.io/tls-acme: 'true'
+      ingress.kubernetes.io/force-ssl-redirect: 'true'
+      nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
+      nginx.ingress.kubernetes.io/cors-allow-credentials: 'true'
+    hosts:
+      - host: 'hello.drunkcoding.net'
+        port: 80
+    #This is the name that cert-manager will use and issue the SSL cert
+    tls: tls-hello-world-lets
+#  configMap:
+#  secrets:
