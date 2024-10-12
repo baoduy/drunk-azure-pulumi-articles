@@ -8,7 +8,7 @@ appVersion: 'latest'
 dependencies:
   # hello-world-apps
   - name: drunk-app
-    alias: toolbox
+    alias: hello-world
     version: 1.x.x
     condition: hello-world.enabled
     repository: https://baoduy.github.io/drunk.charts/drunk-app
