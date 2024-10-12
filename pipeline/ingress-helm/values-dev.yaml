@@ -85,6 +85,6 @@ certmanager:
 letsencrypt:
   # the first deployment this need to be 'false'
   # after cert-manager deployed then enable this to deploy 'lets-encrypt' cluster issuer.
-  enabled: false
+  enabled: true
   email: 'admin@${{cf-domain}}'
   cfToken: '${{cf-dns-token}}'
