@@ -131,3 +131,4 @@ dist
 .idea
 **/bin
 **/.vscode
+**/_output

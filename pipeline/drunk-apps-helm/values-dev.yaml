@@ -5,11 +5,36 @@ hello-world:
     # this image is a sample image was provided by Microsoft AKS team for demo purposes.
     image: '${{acrName}}.azurecr.io/azuredocs/aks-helloworld'
     tag: 'v1'
+  deployment:
+    enabled: true
+    replicaCount: 1
+    liveness: '/healthz'
+    ports:
+      http: 80
+    resources:
+      limits:
+        cpu: 1
+        memory: 1Gi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+    podSecurityContext:
+      fsGroup: 10000
+      runAsUser: 10000
+      runAsGroup: 10000
+    securityContext:
+      capabilities:
+        drop:
+          - ALL
+      readOnlyRootFilesystem: true
+      allowPrivilegeEscalation: false
+      runAsNonRoot: true
   ingress:
     enabled: true
     # the className of the nginx ingress
     className: 'internal'
     annotations:
+      # This annotation is required for cert-manager to trigger the SSL generation for this ingress
       kubernetes.io/tls-acme: 'true'
       ingress.kubernetes.io/force-ssl-redirect: 'true'
       nginx.ingress.kubernetes.io/backend-protocol: 'HTTP'
