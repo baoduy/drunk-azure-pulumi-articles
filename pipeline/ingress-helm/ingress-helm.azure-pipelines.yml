@@ -53,23 +53,9 @@ steps:
       scriptType: 'bash'
       scriptLocation: 'inlineScript'
       inlineScript: |
+        # login to AKS using Service Principal
         az aks get-credentials --resource-group $(rsGroup) --name $(aksName) --overwrite-existing --public-fqdn
         kubelogin convert-kubeconfig -l azurecli
-
+        
+        # Deploy Helm Chart
         helm upgrade --namespace nginx-ingress --install --values '$(chart)/$(valueFile)' --create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify  $(releaseName) $(chart)
-
-  # - task: HelmDeploy@0
-  #   displayName: 'Deploy Helm'
-  #   inputs:
-  #     connectionType: 'Azure Resource Manager'
-  #     azureSubscription: '$(azureSubscription)'
-  #     azureResourceGroup: '$(rsGroup)'
-  #     kubernetesCluster: '$(aksName)'
-  #     namespace: 'nginx-ingress'
-  #     command: 'upgrade'
-  #     chartType: 'FilePath'
-  #     chartPath: './pipeline/ingress-helm'
-  #     releaseName: 'nginx-ingress'
-  #     valueFile: '$(valueFile)'
-  #     waitForExecution: false
-  #     arguments: '--create-namespace --cleanup-on-fail --history-max 5 --insecure-skip-tls-verify'

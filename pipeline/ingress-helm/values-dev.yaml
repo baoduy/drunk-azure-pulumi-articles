@@ -24,11 +24,9 @@ nginx:
       default: true
       controllerValue: k8s.io/ingress-nginx
     allowSnippetAnnotations: 'false'
-    replicaCount: 2
-    autoscaling:
-      enabled: false
     service:
       annotations:
+        #This is important to tell azure load balancer that this is an internal IP address
         service.beta.kubernetes.io/azure-load-balancer-internal: 'true'
       externalTrafficPolicy: 'Local'
       loadBalancerIP: '${{private-ip}}'
@@ -41,19 +39,8 @@ nginx:
       proxy-buffer-size: '800k'
       client-header-buffer-size: '800k'
       client_max_body_size: '10m'
-      enable-modsecurity: 'true'
-      enable-owasp-modsecurity-crs: 'true'
-      worker-shutdown-timeout: '100s'
-      worker-connections: '1024'
-      worker-processes: 'auto'
       annotation-value-word-blocklist: 'load_module,lua_package,_by_lua,location,root,proxy_pass,serviceaccount,{,},\\'
-    resources:
-      limits:
-        cpu: '1'
-        memory: '1Gi'
-      requests:
-        cpu: '10m'
-        memory: '10Mi'
+
 #===========Cert-manager=======================
 certmanager:
   enabled: true
