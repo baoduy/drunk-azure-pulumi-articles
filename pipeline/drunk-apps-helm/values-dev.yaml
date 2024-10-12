@@ -28,7 +28,7 @@ hello-world:
     capabilities:
       drop:
         - ALL
-    readOnlyRootFilesystem: true
+    readOnlyRootFilesystem: false
     allowPrivilegeEscalation: false
     runAsNonRoot: true
   ingress:
