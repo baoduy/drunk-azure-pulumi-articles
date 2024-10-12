@@ -17,6 +17,7 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
             'MicrosoftContainerRegistry',
             'AzureMonitor',
             'AzureKeyVault',
+            'AzureContainerRegistry',
         ],
         destinationPorts: ['443'],
     },
