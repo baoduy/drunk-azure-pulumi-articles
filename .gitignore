@@ -132,3 +132,4 @@ dist
 **/bin
 **/.vscode
 **/_output
+**/state.json
