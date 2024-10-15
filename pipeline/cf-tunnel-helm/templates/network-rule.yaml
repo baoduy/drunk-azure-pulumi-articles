@@ -15,7 +15,8 @@ spec:
             cidr: {{ $cidr }}
           {{- end }}
       ports:
-        - {{- range $p := .Values.network.ports }}
+        {{- range $p := .Values.network.ports }}
         - port: {{ $p }}
-          {{- end }}
+          protocol: TCP
+        {{- end }}
 {{- end }}
