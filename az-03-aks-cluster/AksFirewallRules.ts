@@ -48,7 +48,6 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
         name: 'aks-net-allows-cf-tunnel',
         description: 'Allows Cloudflare Tunnel',
         ipProtocols: ['TCP', 'UDP'],
-        //This rule will allow the entire network.
         sourceAddresses: [subnetSpaces.aks],
         destinationAddresses: [
             '198.41.192.167',
@@ -73,6 +72,15 @@ const netRules: pulumi.Input<inputs.network.NetworkRuleArgs>[] = [
             '198.41.200.23',
         ],
         destinationPorts: ['7844'],
+    },
+    {
+        ruleType: 'NetworkRule',
+        name: 'aks-net-allows-to-devops',
+        description: 'Allows AKS to access DevOps',
+        ipProtocols: ['TCP', 'UDP'],
+        sourceAddresses: [subnetSpaces.aks],
+        destinationAddresses: [subnetSpaces.devOps],
+        destinationPorts: ['80', '443', '22'],
     },
 ];
 
