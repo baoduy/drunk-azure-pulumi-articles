@@ -15,6 +15,7 @@ spec:
             cidr: {{ $cidr }}
           {{- end }}
       ports:
-        - port: 443
-        - port: 80
+        - {{- range p := .Values.network.ports }}
+        - port: {{ p }}
+          {{- end }}
 {{- end }}
