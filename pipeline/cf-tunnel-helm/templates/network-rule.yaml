@@ -10,8 +10,10 @@ spec:
   ingress: []
   egress:
     - to:
-        - ipBlock:
-            cidr: {{ .Values.network.cidr }}
+        - {{- range $cidr := .Values.network.cidrs }}
+          ipBlock:
+            cidr: {{ $cidr }}
+          {{- end }}
       ports:
         - port: 443
         - port: 80

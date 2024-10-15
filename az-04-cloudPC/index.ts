@@ -60,6 +60,18 @@ const vnet = VNet(config.azGroups.cloudPC, {
             destinationAddressPrefix: 'VirtualNetwork',
             destinationPortRange: '*',
         },
+        {
+            name: `allows-aks-to-devops`,
+            description: 'Allows aks to devops Inbound',
+            priority: 301,
+            protocol: '*',
+            access: 'Allow',
+            direction: 'Inbound',
+            sourceAddressPrefix: config.subnetSpaces.aks,
+            sourcePortRange: '*',
+            destinationAddressPrefix: config.subnetSpaces.devOps,
+            destinationPortRange: '*',
+        },
     ],
     //route all requests to firewall's private IP
     routes: [
