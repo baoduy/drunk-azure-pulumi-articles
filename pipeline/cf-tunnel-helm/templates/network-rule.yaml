@@ -15,7 +15,7 @@ spec:
             cidr: {{ $cidr }}
           {{- end }}
       ports:
-        - {{- range p := .Values.network.ports }}
-        - port: {{ p }}
+        - {{- range $p := .Values.network.ports }}
+        - port: {{ $p }}
           {{- end }}
 {{- end }}
