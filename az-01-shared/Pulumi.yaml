@@ -5,6 +5,18 @@ runtime:
     packagemanager: pnpm
 description: A minimal Azure Native TypeScript Pulumi program
 config:
+  pulumi:autonaming:
+    value:
+      #mode: default
+      pattern: ${stack}-${project}-${name}${hex(3)}
+      providers:
+        azure-native:
+          #mode: verbatim
+          pattern: ${stack}-${project}-${name}${hex(3)}
+          resources:
+            "azure-native:storage:Account": ${name}-${organization}${string(6)}
+            "azure-native:resources:ResourceGroup": ${stack}-${project}-${name}-${organization}
+            
   pulumi:tags:
     value:
       pulumi:template: azure-typescript

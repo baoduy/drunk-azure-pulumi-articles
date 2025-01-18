@@ -13,7 +13,7 @@ export default (
         rsGroup: azure.resources.ResourceGroup;
     }
 ) => {
-    const vaultName = getName(name, 'vlt');
+    const vaultName = name;
     const vault = new azure.keyvault.Vault(
         vaultName,
         {

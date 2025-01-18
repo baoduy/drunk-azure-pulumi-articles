@@ -6,7 +6,7 @@ import Vault from './Vault';
 
 // Create Shared Resource Group
 const rsGroup = new azure.resources.ResourceGroup(
-    getGroupName(config.azGroups.shared)
+    config.azGroups.shared
 );
 
 //The vault to store env secrets env
