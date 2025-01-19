@@ -3,27 +3,39 @@
 {
 	"name": "Node.js & TypeScript",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/typescript-node",
+	//"image": "mcr.microsoft.com/devcontainers/typescript-node",
+  //"workspaceMount": "type=bind,src=${localWorkspaceFolder},dst=/code",
+	"workspaceFolder": "/code",
 
-  "containerEnv": {
-    //pulumi SG is using steven.hoang@transwap.com
-    "PULUMI_ACCESS_TOKEN": "",
-    "PULUMI_CONFIG_PASSPHRASE": "",
-    "GITHUB_TOKEN": ""
-    //"NODE_TLS_REJECT_UNAUTHORIZED": "0"
-  },
+  "dockerComposeFile": "dev-compose.yaml",
+  "service": "dev",
+  "remoteUser": "root",
+  "remoteEnv": {
+		"LOCALWSF": "${localWorkspaceFolder}",
+		"CONTAINERWSF": "${containerWorkspaceFolder}"
+	},
+	
+//  "containerEnv": {
+//    //pulumi SG is using steven.hoang@transwap.com
+//    "PULUMI_ACCESS_TOKEN": "",
+//    "PULUMI_CONFIG_PASSPHRASE": "",
+//    "GITHUB_TOKEN": ""
+//    //"NODE_TLS_REJECT_UNAUTHORIZED": "0"
+//  },
   
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	"features": {
       "ghcr.io/devcontainers/features/azure-cli:1": {},
-      "ghcr.io/flexwie/devcontainer-features/pulumi:1": {}
+      "ghcr.io/flexwie/devcontainer-features/pulumi:1": {},
+      //"ghcr.io/devcontainers/features/sshd:1": {}
     },
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "export PATH=\"$PATH:/root/.pulumi/bin\" && npm install && npm run install-all",
+	//"postCreateCommand": "export PATH=\"$PATH:/root/.pulumi/bin\" && npm install && npm run install-all",
+  //"postStartCommand": "export PATH=\"$PATH:/root/.pulumi/bin\" && npm install && npm run install-all",
 
 	// Configure tool-specific properties.
   "customizations" : {

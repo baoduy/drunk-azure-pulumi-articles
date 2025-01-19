@@ -1,0 +1,12 @@
+
+services:
+  dev:
+    image: mcr.microsoft.com/devcontainers/typescript-node
+    container_name: dev-container
+    command: tail -f /dev/null
+    user: root
+    env_file:
+      - ../.env
+    volumes:
+      - ../:/code
+    working_dir: /code
