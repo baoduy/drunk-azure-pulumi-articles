@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 import * as pulumi from '@pulumi/pulumi';
@@ -23,7 +22,7 @@ const createUserAssignIdentity = (
 ) => {
     //Create Identity
     const identity = new azure.managedidentity.UserAssignedIdentity(
-        getName(name, 'uid'),
+        name,
         {
             resourceGroupName: rsGroup.name,
         },
@@ -32,7 +31,7 @@ const createUserAssignIdentity = (
 
     //Add identity to readOnly group of Vault to allow reading encryption Key
     new ad.GroupMember(
-        getName(name, 'uid-vault-read'),
+        name,
         {
             groupObjectId: vault.readOnlyGroupId,
             memberObjectId: identity.principalId,
@@ -94,7 +93,7 @@ export default (
         vault,
     }: { rsGroup: azure.resources.ResourceGroup; vault: VaultInfo }
 ) => {
-    const diskName = getName(name, 'disk-encrypt');
+    const diskName = name;
     const uid = createUserAssignIdentity(diskName, { rsGroup, vault });
     //Create Key on vault
     const key = createEncryptionKey(diskName, vault);

@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 
 /**
@@ -16,7 +15,7 @@ export default (
 ) =>
     //The registry name is only allowed '^[a-zA-Z0-9]*$' so we will remove all dashes from the name.
     new azure.containerregistry.Registry(
-        getName(name, 'acr').replace(/-/g, ''),
+        name.replace(/-/g, ''),
         {
             resourceGroupName: rsGroup.name,
             sku: { name: sku },

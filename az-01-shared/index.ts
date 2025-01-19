@@ -1,13 +1,10 @@
-import { getGroupName } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as config from '../config';
 import Log from './Log';
 import Vault from './Vault';
 
 // Create Shared Resource Group
-const rsGroup = new azure.resources.ResourceGroup(
-    config.azGroups.shared
-);
+const rsGroup = new azure.resources.ResourceGroup(config.azGroups.shared);
 
 //The vault to store env secrets env
 const vaultInfo = Vault(config.azGroups.shared, {

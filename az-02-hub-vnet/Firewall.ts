@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as pulumi from '@pulumi/pulumi';
 
@@ -27,7 +26,7 @@ export default (
     );
     // Create Public IP Address for outbound traffic
     const publicIP = new azure.network.PublicIPAddress(
-        getName(`${name}-outbound`, 'ip'),
+        `${name}-outbound`,
         {
             resourceGroupName: rsGroup.name, // Resource group name
             publicIPAllocationMethod: azure.network.IPAllocationMethod.Static, // Static IP allocation
@@ -41,7 +40,7 @@ export default (
 
     // Create Management Public IP Address for Firewall "Basic" tier
     const managePublicIP = new azure.network.PublicIPAddress(
-        getName(`${name}-manage`, 'ip'),
+        `${name}-manage`,
         {
             resourceGroupName: rsGroup.name, // Resource group name
             publicIPAllocationMethod: azure.network.IPAllocationMethod.Static, // Static IP allocation
@@ -54,7 +53,7 @@ export default (
     );
 
     // Create Azure Firewall
-    const firewallName = getName(name, 'firewall');
+    const firewallName = name;
     const firewall = new azure.network.AzureFirewall(
         firewallName,
         {

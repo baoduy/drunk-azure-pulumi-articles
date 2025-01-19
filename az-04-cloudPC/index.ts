@@ -1,6 +1,5 @@
-import { getGroupName, StackReference } from '@az-commons';
+import { StackReference } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
-import * as pulumi from '@pulumi/pulumi';
 import * as config from '../config';
 import FirewallRule from './CloudPcFirewallRules';
 import DiskEncryptionSet from './DiskEncryptionSet';
@@ -27,9 +26,7 @@ const vault = {
 };
 
 // Create Shared Resource Group
-const rsGroup = new azure.resources.ResourceGroup(
-    getGroupName(config.azGroups.cloudPC)
-);
+const rsGroup = new azure.resources.ResourceGroup(config.azGroups.cloudPC);
 
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.cloudPC, {

@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
 import * as resources from '@pulumi/azure-native/resources';
 import * as inputs from '@pulumi/azure-native/types/input';
@@ -18,7 +17,7 @@ const createSecurityGroup = (
     }
 ) =>
     new network.NetworkSecurityGroup(
-        getName(name, 'sg'),
+        name,
         {
             resourceGroupName: rsGroup.name,
             securityRules: [
@@ -67,7 +66,7 @@ const createRouteTable = (
     }
 ) =>
     new network.RouteTable(
-        getName(name, 'rtb'),
+        name,
         {
             resourceGroupName: rsGroup.name,
             routes,
@@ -102,9 +101,8 @@ export default (
         ? createRouteTable(name, { rsGroup, routes })
         : undefined;
 
-    const vnetName = getName(name, 'vnet');
     const vnet = new network.VirtualNetwork(
-        vnetName,
+        name,
         {
             // Resource group name
             resourceGroupName: rsGroup.name,
@@ -140,7 +138,7 @@ export default (
     if (peeringVnet) {
         //from `az-02-hub-vnet` to `az--04-cloudPc`
         new network.VirtualNetworkPeering(
-            `hun-to-${vnetName}`,
+            `hun-to-${name}`,
             {
                 resourceGroupName: peeringVnet.resourceGroupName,
                 virtualNetworkName: peeringVnet.name,
@@ -154,7 +152,7 @@ export default (
         );
         //from `az-04-cloudPc` to `az-02-hub-vnet`
         new network.VirtualNetworkPeering(
-            `${vnetName}-to-hub`,
+            `${name}-to-hub`,
             {
                 resourceGroupName: rsGroup.name,
                 virtualNetworkName: vnet.name,

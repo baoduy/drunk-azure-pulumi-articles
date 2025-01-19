@@ -1,4 +1,4 @@
-import { getGroupName, StackReference } from '@az-commons';
+import { StackReference } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
 import * as resources from '@pulumi/azure-native/resources';
 import * as config from '../config';
@@ -10,7 +10,7 @@ import VNet from './VNet';
 const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 
 // Create Hub Resource Group
-const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.hub));
+const rsGroup = new resources.ResourceGroup(config.azGroups.hub);
 
 // Create Virtual Network with Subnets
 const vnet = VNet(config.azGroups.hub, {

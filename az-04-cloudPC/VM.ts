@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as pulumi from '@pulumi/pulumi';
 import * as random from '@pulumi/random';
@@ -15,12 +14,12 @@ type VaultInfo = {
  * Generate the username and password for the vm
  * */
 const generateLogin = (name: string, vault: VaultInfo) => {
-    const usernameKey = getName(name, 'username');
+    const usernameKey = `${name}-username`;
+    const passwordKey = `${name}-password`;
     const username = new random.RandomString(usernameKey, {
         length: 15,
         special: false,
     });
-    const passwordKey = getName(name, 'password');
     const password = new random.RandomPassword(passwordKey, {
         length: 50,
     });
@@ -68,13 +67,12 @@ export default (
         vnet: azure.network.VirtualNetwork;
     }
 ) => {
-    const vmName = getName(name, 'vm');
     //Create VM login info
-    const loginInfo = generateLogin(vmName, vault);
+    const loginInfo = generateLogin(name, vault);
 
     //Create VM NIC
     const nic = new azure.network.NetworkInterface(
-        vmName,
+        name,
         {
             resourceGroupName: rsGroup.name,
             ipConfigurations: [
@@ -95,7 +93,7 @@ export default (
 
     //Create VM
     const vm = new azure.compute.VirtualMachine(
-        vmName,
+        name,
         {
             resourceGroupName: rsGroup.name,
             hardwareProfile: { vmSize },
@@ -106,7 +104,7 @@ export default (
             //az feature register --name EncryptionAtHost  --namespace Microsoft.Compute
             securityProfile: { encryptionAtHost: true },
             osProfile: {
-                computerName: vmName,
+                computerName: name,
                 adminUsername: loginInfo.username.result,
                 adminPassword: loginInfo.password.result,
                 allowExtensionOperations: true,

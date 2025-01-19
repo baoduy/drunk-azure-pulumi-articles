@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
 import * as resources from '@pulumi/azure-native/resources';
 import * as inputs from '@pulumi/azure-native/types/input';
@@ -14,7 +13,7 @@ export default (
     }
 ) =>
     new network.VirtualNetwork(
-        getName(name, 'vnet'),
+        name,
         {
             // Resource group name
             resourceGroupName: rsGroup.name,

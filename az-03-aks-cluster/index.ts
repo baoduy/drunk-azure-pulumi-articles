@@ -1,4 +1,4 @@
-import { getGroupName, getName, StackReference } from '@az-commons';
+import { StackReference } from '@az-commons';
 import * as resources from '@pulumi/azure-native/resources';
 import * as config from '../config';
 import Aks from './Aks';
@@ -11,7 +11,7 @@ const sharedStack = StackReference<config.SharedStackOutput>('az-01-shared');
 const hubVnetStack = StackReference<config.HubVnetOutput>('az-02-hub-vnet');
 
 // Create Vnet
-const rsGroup = new resources.ResourceGroup(getGroupName(config.azGroups.aks));
+const rsGroup = new resources.ResourceGroup(config.azGroups.aks);
 
 //Create Private Container Registry to AKS
 const acr = ContainerRegistry(config.azGroups.aks, { rsGroup });
@@ -71,7 +71,7 @@ const vnet = VNet(config.azGroups.aks, {
 //Create AKS cluster
 const aks = Aks(config.azGroups.aks, {
     rsGroup,
-    nodeAdminUserName: getName(config.azGroups.aks, 'admin'),
+    nodeAdminUserName: config.azGroups.aks,
     vaultInfo: {
         vaultName: sharedStack.vault.name,
         resourceGroupName: sharedStack.rsGroup.name,

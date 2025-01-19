@@ -1,4 +1,4 @@
-import { currentPrincipal, getName, tenantId } from '@az-commons';
+import { currentPrincipal, tenantId } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 

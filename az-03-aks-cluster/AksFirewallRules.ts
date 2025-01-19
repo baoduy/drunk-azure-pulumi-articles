@@ -1,4 +1,4 @@
-import { currentRegionCode, getName } from '@az-commons';
+import { currentRegionCode } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as network from '@pulumi/azure-native/network';
 import * as inputs from '@pulumi/azure-native/types/input';
@@ -141,7 +141,7 @@ export default (
     }
 ) =>
     new network.FirewallPolicyRuleCollectionGroup(
-        getName(name, 'fw-group'),
+        name,
         {
             resourceGroupName: rootPolicy.resourceGroupName,
             firewallPolicyName: rootPolicy.name,

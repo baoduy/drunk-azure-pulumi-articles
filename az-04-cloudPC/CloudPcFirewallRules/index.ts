@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
 import * as inputs from '@pulumi/azure-native/types/input';
 import * as pulumi from '@pulumi/pulumi';
@@ -43,13 +42,10 @@ export default (
         });
     }
 
-    return new network.FirewallPolicyRuleCollectionGroup(
-        getName(name, 'fw-group'),
-        {
-            resourceGroupName: rootPolicy.resourceGroupName,
-            firewallPolicyName: rootPolicy.name,
-            priority: 301,
-            ruleCollections,
-        }
-    );
+    return new network.FirewallPolicyRuleCollectionGroup(name, {
+        resourceGroupName: rootPolicy.resourceGroupName,
+        firewallPolicyName: rootPolicy.name,
+        priority: 301,
+        ruleCollections,
+    });
 };

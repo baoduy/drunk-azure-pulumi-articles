@@ -1,4 +1,4 @@
-import { currentPrincipal, getName, tenantId } from '@az-commons';
+import { currentPrincipal, tenantId } from '@az-commons';
 import * as azure from '@pulumi/azure-native';
 import * as ad from '@pulumi/azuread';
 import * as pulumi from '@pulumi/pulumi';
@@ -12,7 +12,6 @@ const createRBACIdentity = (
     name: string,
     rsGroup: azure.resources.ResourceGroup
 ) => {
-    name = getName(name, 'Admin');
     //Create Entra Admin Group
     const adminGroup = new ad.Group(name, {
         displayName: `AZ ROL ${name.toUpperCase()}`,
@@ -82,7 +81,7 @@ const createSsh = (
         vaultName: pulumi.Input<string>;
     }
 ) => {
-    const sshName = getName(name, 'ssh');
+    const sshName = name;
     const ssh = new SshGenerator(sshName, {
         password: new random.RandomPassword(name, { length: 50 }).result,
     });
@@ -150,7 +149,7 @@ export default (
     const aksIdentity = createRBACIdentity(name, rsGroup);
     const ssh = createSsh(name, vaultInfo);
 
-    const aksName = getName(name, 'cluster');
+    const aksName = name;
     const nodeResourceGroup = `${aksName}-nodes`;
 
     //Create AKS Cluster

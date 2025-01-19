@@ -1,4 +1,3 @@
-import { getName } from '@az-commons';
 import * as network from '@pulumi/azure-native/network';
 import * as resources from '@pulumi/azure-native/resources';
 import * as inputs from '@pulumi/azure-native/types/input';
@@ -18,7 +17,7 @@ const createSecurityGroup = (
     }
 ) =>
     new network.NetworkSecurityGroup(
-        getName(name, 'sg'),
+        name,
         {
             resourceGroupName: rsGroup.name,
             securityRules: [
@@ -67,7 +66,7 @@ const createRouteTable = (
     }
 ) =>
     new network.RouteTable(
-        getName(name, 'rtb'),
+        name,
         {
             resourceGroupName: rsGroup.name,
             routes,
@@ -102,7 +101,7 @@ export default (
         ? createRouteTable(name, { rsGroup, routes })
         : undefined;
 
-    const vnetName = getName(name, 'vnet');
+    const vnetName = name;
     const vnet = new network.VirtualNetwork(
         vnetName,
         {
